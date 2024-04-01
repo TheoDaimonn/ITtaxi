@@ -1,2 +1,2 @@
 # ITtaxi
-It project in Moscow Aviation Institute
+It project provided by Moscow Aviation Institute
