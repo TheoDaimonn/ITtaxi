@@ -1,6 +1,9 @@
 from flask import Flask, render_template, redirect, url_for
 from app import app
 from app.forms import RegistrationForm, LoginForm
+from flask_login import login_user, logout_user, current_user
+
+from app.models import User
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -25,6 +28,11 @@ def index():
 
 @app.route('/login')
 def login_page():
+    if current_user.is_authenticated:
+        return redirect((url_for('index')))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form)
     return render_template("log-in.html")
 
 
