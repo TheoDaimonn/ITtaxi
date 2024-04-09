@@ -34,9 +34,6 @@ class Order(db.Model):
     price = db.Column(db.String(140), nullable=False)
     order_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-#>>> from app import app, db
-#>>> app_context = app.app_context()
-#>>> app_context.push()
 
     def __repr__(self):
         return '<Order: start - {}, finish - {}, price - {}, time - {}>'.format(self.place_start, self.place_end, self.price, self.order_time)
