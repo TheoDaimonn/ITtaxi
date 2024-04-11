@@ -1,10 +1,12 @@
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
-from app import db, login
+from app import db
 from datetime import datetime
+from flask_login import UserMixin
+from app import login
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(64), index=True, nullable=False)
     last_name = db.Column(db.String(64), index=True, nullable=False)
@@ -19,12 +21,7 @@ class User(db.Model):
         return check_password_hash(self.password_hashed, password)
 
     def __repr__(self):
-        return '<User {}, {}, {}>'.format(self.first_name, self.last_name, self.email)
-
-
-@login.user_loader
-def load_user(id):
-    return User.query.get(int(id))
+        return '<User {}, {}, {}, {}>'.format(self.first_name, self.last_name, self.email, self.password_hashed)
 
 
 class Order(db.Model):
@@ -37,3 +34,8 @@ class Order(db.Model):
 
     def __repr__(self):
         return '<Order: start - {}, finish - {}, price - {}, time - {}>'.format(self.place_start, self.place_end, self.price, self.order_time)
+
+
+@login.user_loader
+def load_user(id):
+    return User.query.get(int(id))
