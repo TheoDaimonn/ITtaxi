@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Регистрация для водителя</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="reg-page">
+        <div class="container reg__container">
+            <div class="inner">
+                <div class="reg__content">
+                    <div class="sidebar">
+                        <div class="sidebar-item">
+                            <a href="index.html">
+                                <img class="logo" src="images/logo.svg" alt="logo">
+                            </a>
+                        </div>
+                        <div class="sidebar-item">
+                            <img class="phone-img" src="images/phone.svg" alt="phone">
+                            <img class="email-img" src="images/email.svg" alt="email">
+                            <img class="inst-img" src="images/inst.svg" alt="inst">
+                        </div>
+                    </div>
+                    <div class="reg__main">
+                        <h2 class="reg__title">Registration for driver</h2>
+                        <form class="reg__form">
+                            <h3 class="title reg__form-title">Sign Up</h1>
+                            <ul>
+                                <li>
+                                    <input type="text" name="fullname" placeholder="Full Name" required />
+                                </li>
+                                <li>
+                                    <input type="email" name="email" placeholder="Email" required />
+                                </li>
+                                <li>
+                                    <input type="password" name="password" placeholder="Password" required />
+                                </li>
+                                <li>
+                                    <input type="password" name="re-password" placeholder="Repeat password" required />
+                                </li>
+                                <li>
+                                    <input type="text" name="car-number" placeholder="Car number" required />
+                                </li>
+                                <li>
+                                    <input type="text" name="car-model" placeholder="Car model" required />
+                                </li>
+                                <button class="reg__form-btn" type="submit">Enter</button>
+                            </ul>
+                        </form>
+                    </div>
+                    <div class="reg__image" style="background-image: url('images/driver-bg.png');"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
