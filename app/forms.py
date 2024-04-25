@@ -50,3 +50,7 @@ class DriverRegistrationForm(FlaskForm):
         driver = Driver.query.filter_by(email=email.data).first() #Обращаемся в таблицу водителей
         if driver is not None:
             raise ValidationError("This email is currently used")
+
+
+class TakeOrderForm(FlaskForm):
+    submit = SubmitField('Take Order')

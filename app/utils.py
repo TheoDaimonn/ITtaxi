@@ -13,6 +13,7 @@ def login_required(role):
             if current_user.role != role:
                 print(f"Пользователь {current_user.email} имеет роль {current_user.role}, а ожидалось {role}")
                 return abort(403)
+            print(f"Пользователь {current_user.email} имеет роль {current_user.role}, а ожидалось {role}")
 
             return func(*args, **kwargs)
 

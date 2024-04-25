@@ -5,6 +5,8 @@ from datetime import datetime
 from flask_login import UserMixin
 from app import login
 import random
+from sqlalchemy import event
+from sqlalchemy.schema import DDL
 
 
 class User(UserMixin, db.Model):
