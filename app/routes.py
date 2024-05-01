@@ -2,11 +2,12 @@ from urllib import request
 
 from flask import render_template, flash, redirect, url_for, request
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, OrderForm, DriverRegistrationForm
-from flask_login import login_user, logout_user, current_user, login_required
+from app.forms import LoginForm, RegistrationForm, OrderForm, DriverRegistrationForm, TakeOrderForm
+from flask_login import login_user, logout_user, current_user
 from app.models import User, Order, Driver
 from werkzeug.urls import url_parse
 from app.utils import login_required
+from sqlalchemy import func
 
 
 @app.route('/')
@@ -15,19 +16,11 @@ def choice():
 
 
 @app.route('/index')
-@login_required(('user',))
+@login_required('user')
 def index():
-    posts = [
-        {
-            'author': {'username': 'John'},
-            'body': 'Beautiful day in Portland!'
-        },
-        {
-            'author': {'username': 'Susan'},
-            'body': 'The Avengers movie was so cool!'
-        }
-    ]
-    return render_template('index.html', title='Home', posts=posts)
+
+    user_orders = current_user.orders.all()
+    return render_template('index.html', title='Home', orders=user_orders)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -71,7 +64,7 @@ def register():
 
 
 @app.route('/order', methods=['GET', 'POST'])
-@login_required(('user',))
+@login_required('user')
 def order():
     form = OrderForm()
     if form.validate_on_submit():
@@ -93,6 +86,9 @@ def driver_register():
     if form.validate_on_submit():
         driver = Driver(first_name=form.first_name.data, last_name=form.last_name.data, middle_name=form.middle_name.data, car_model=form.car_model.data, license_plate=form.license_plate.data, email=form.email.data)
         driver.set_password(form.password.data)
+        max_id = db.session.query(func.max(Driver.id)).scalar() or 0
+        new_id = 1 + max_id
+        driver.id = new_id
         db.session.add(driver)
         db.session.commit()
         flash('Thanks for registering!')
@@ -122,4 +118,25 @@ def driver_login():
 @app.route('/driver_main')
 @login_required('driver')
 def driver_main():
-    return render_template('driver_main.html', title='Home')
+    user_orders = current_user.orders.all()
+    return render_template('driver_main.html', title='Home', user_orders=user_orders)
+
+
+@app.route('/orders')
+@login_required('driver')
+def show_orders():
+    orders = Order.query.filter_by(driver_id=None).all()
+    return render_template('orders.html', orders=orders)
+
+
+@app.route('/take_order/<int:order_id>', methods=['POST'])
+@login_required('driver')
+def take_order(order_id):
+    order = Order.query.get_or_404(order_id)
+    if order.driver_id is not None:
+        flash('This order has already been taken.', 'warning')
+        return redirect(url_for('show_orders'))
+    order.driver_id = current_user.id
+    db.session.commit()
+    flash('Order taken successfully!', 'success')
+    return redirect(url_for('show_orders'))
