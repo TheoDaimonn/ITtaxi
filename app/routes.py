@@ -140,3 +140,4 @@ def take_order(order_id):
     db.session.commit()
     flash('Order taken successfully!', 'success')
     return redirect(url_for('show_orders'))
+
