@@ -16,7 +16,6 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(128), unique=True, index=True, nullable=False)
     password_hashed = db.Column(db.String(200), nullable=False)
     orders = db.relationship('Order', backref='user', lazy='dynamic')
-    role = db.Column(db.String(20), default='user')
 
     def set_password(self, password):
         self.password_hashed = generate_password_hash(password)

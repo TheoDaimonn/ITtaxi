@@ -26,8 +26,8 @@
                             {% endfor %}
                         </li>
                         <li>
-                            {{ form.email(type='password', class_='password', placeholder='Password', required=True) }}<br>
-                            {% for error in form.email.errors %}
+                            {{ form.password(type='password', class_='password', placeholder='Password', required=True) }}<br>
+                            {% for error in form.password.errors %}
                                 <span style="color: red;">[{{ error }}]</span>
                             {% endfor %}
                         </li>
