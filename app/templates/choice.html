@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+    <title>Login Selection - IT_Taxi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        .container {
+            margin: 100px auto;
+            width: 300px;
+            text-align: center;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Welcome to IT_Taxi</h2>
+    <p>Please select your login type:</p>
+
+    <form action="{{ url_for('login') }}" method="get">
+        <button class="btn" type="submit">Login as User</button>
+    </form>
+
+    <form action="{{ url_for('driver_login') }}" method="get">
+        <button class="btn" type="submit">Login as Driver</button>
+    </form>
+</div>
+
+</body>
+</html>
+

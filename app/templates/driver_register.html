@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Регистрация для водителя</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="reg-page">
+        <div class="container reg__container">
+            <div class="inner">
+                <div class="reg__content">
+                    <div class="sidebar">
+                        <div class="sidebar-item">
+                            <a href="index.html">
+                                <img class="logo" src="../static/css/images/logo.svg" alt="logo">
+                            </a>
+                        </div>
+                        <div class="sidebar-item">
+                            <img class="phone-img" src="../static/css/images/phone.svg" alt="phone">
+                            <img class="email-img" src="../static/css/images/email.svg" alt="email">
+                            <img class="inst-img" src="../static/css/images/inst.svg" alt="inst">
+                        </div>
+                    </div>
+                    <div class="reg__main" method="POST" action="{{ url_for('driver_register') }}">
+                        <h2 class="reg__title">Registration for driver</h2>
+                        <form class="reg__form">
+                            <h3 class="title reg__form-title">Sign Up</h1>
+                            {{ form.hidden_tag() }}
+                            <ul>
+                                <li>
+                                    {{ form.first_name(type='text', placeholder="First Name", required=True) }}<br>
+                                    {% for error in form.first_name.errors %}
+                                        <span style="color: red;">{{ error }}</span><br>
+                                    {% endfor %}
+                                </li>
+                                <li>
+                                    {{ form.last_name(type='text', placeholder="Last Name", required=True) }}<br>
+                                    {% for error in form.last_name.errors %}
+                                        <span style="color: red;">{{ error }}</span><br>
+                                    {% endfor %}
+                                </li>
+                                <li>
+                                    {{ form.middle_name(type='text', placeholder="Middle Name", required=True) }}<br>
+                                    {% for error in form.middle_name.errors %}
+                                        <span style="color: red;">{{ error }}</span><br>
+                                    {% endfor %}
+                                </li>
+                                <li>
+                                    {{ form.email(placeholder="Email", required=True) }}<br>
+                                    {% for error in form.email.errors %}
+                                        <span style="color: red;">{{ error }}</span><br>
+                                    {% endfor %}
+                                </li>
+                                <li>
+                                    {{ form.password(type='password', placeholder="Password", required=True) }}<br>
+                                    {% for error in form.password.errors %}
+                                        <span style="color: red;">{{ error }}</span><br>
+                                    {% endfor %}
+                                </li>
+                                <li>
+                                    {{ form.password_2(type='password', placeholder="Repeat password", required=True) }}<br>
+                                    {% for error in form.password_2.errors %}
+                                        <span style="color: red;">{{ error }}</span><br>
+                                    {% endfor %}
+                                </li>
+                                <li>
+                                    {{ form.car_model(type='text', placeholder="Car model", required=True) }}<br>
+                                    {% for error in form.car_model.errors %}
+                                        <span style="color: red;">{{ error }}</span><br>
+                                    {% endfor %}
+                                </li>
+                                <li>
+                                    {{ form.license_plate(type='text', placeholder="License", required=True) }}<br>
+                                    {% for error in form.license_plate.errors %}
+                                        <span style="color: red;">{{ error }}</span><br>
+                                    {% endfor %}
+                                </li>
+                                    {{ form.submit(class_="reg__form-btn") }}
+                            </ul>
+                        </form>
+                    </div>
+                    <div class="reg__image" style="background-image: url('../static/css/images/driver-bg.png');"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+
