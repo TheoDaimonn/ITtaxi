@@ -8,6 +8,7 @@ from app.models import User, Order, Driver
 from werkzeug.urls import url_parse
 from app.utils import login_required
 from sqlalchemy import func
+from datetime import datetime
 
 
 @app.route('/')
@@ -126,7 +127,7 @@ def driver_main():
 @login_required('driver')
 def show_orders():
     orders = Order.query.filter_by(driver_id=None).all()
-    return render_template('orders.html', orders=orders)
+    return render_template('choose-order.html', orders=orders)
 
 
 @app.route('/take_order/<int:order_id>', methods=['POST'])
@@ -137,6 +138,7 @@ def take_order(order_id):
         flash('This order has already been taken.', 'warning')
         return redirect(url_for('show_orders'))
     order.driver_id = current_user.id
+    order.order_taked = datetime.utcnow()
     db.session.commit()
     flash('Order taken successfully!', 'success')
     return redirect(url_for('show_orders'))

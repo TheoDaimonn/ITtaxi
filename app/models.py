@@ -16,6 +16,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(128), unique=True, index=True, nullable=False)
     password_hashed = db.Column(db.String(200), nullable=False)
     orders = db.relationship('Order', backref='user', lazy='dynamic')
+    role = db.Column(db.String(64), default='user')
 
     def set_password(self, password):
         self.password_hashed = generate_password_hash(password)
@@ -33,6 +34,7 @@ class Order(db.Model):
     place_end = db.Column(db.String(140), nullable=False)
     price = db.Column(db.String(140), nullable=False)
     order_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    order_taked = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     driver_id = db.Column(db.Integer, db.ForeignKey('driver.id'), nullable=True)
 
