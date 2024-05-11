@@ -5,7 +5,6 @@ from app import app, db
 from app.forms import LoginForm, RegistrationForm, OrderForm, DriverRegistrationForm, TakeOrderForm
 from flask_login import login_user, logout_user, current_user
 from app.models import User, Order, Driver
-from werkzeug.urls import url_parse
 from app.utils import login_required
 from sqlalchemy import func
 from datetime import datetime
@@ -34,10 +33,13 @@ def login():
         if user is None or not user.check_password(form.password.data):
             flash('Invalid email or password!')
             return redirect(url_for('login'))
+        if user is None or not user.check_email(form.email.data):
+            flash('Invalid email or password!')
+            return redirect(url_for('login'))
         logout_user()
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
-        if not next_page or url_parse(next_page).netloc != '':
+        if not next_page:
             next_page = url_for('index')
         return redirect(next_page)
     return render_template('login.html',  title='Sign In', form=form)
@@ -55,8 +57,11 @@ def register():
         return redirect(url_for('index'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(first_name=form.first_name.data, last_name=form.last_name.data, email=form.email.data)
+        user = User()
         user.set_password(form.password.data)
+        user.set_first_name(form.first_name.data)
+        user.set_last_name(form.last_name.data)
+        user.set_email(form.email.data)
         db.session.add(user)
         db.session.commit()
         flash('Thanks for registering!')
@@ -85,8 +90,14 @@ def driver_register():
         return redirect(url_for('index'))
     form = DriverRegistrationForm()
     if form.validate_on_submit():
-        driver = Driver(first_name=form.first_name.data, last_name=form.last_name.data, middle_name=form.middle_name.data, car_model=form.car_model.data, license_plate=form.license_plate.data, email=form.email.data)
+        driver = Driver()
         driver.set_password(form.password.data)
+        driver.set_first_name(form.first_name.data)
+        driver.set_last_name(form.last_name.data)
+        driver.set_middle_name(form.middle_name.data)
+        driver.set_email(form.email.data)
+        driver.set_car_model(form.car_model.data)
+        driver.set_license_plate(form.license_plate.data)
         max_id = db.session.query(func.max(Driver.id)).scalar() or 0
         new_id = 1 + max_id
         driver.id = new_id
@@ -107,10 +118,13 @@ def driver_login():
         if driver is None or not driver.check_password(form.password.data):
             flash('Invalid email or password!')
             return redirect(url_for('driver_login'))
+        if driver is None or not driver.check_email(form.email.data):
+            flash('Invalid email or password!')
+            return redirect(url_for('driver_login'))
         logout_user()
         login_user(driver, remember=form.remember_me.data)
         next_page = request.args.get('next')
-        if not next_page or url_parse(next_page).netloc != '':
+        if not next_page:
             next_page = url_for('driver_main')
         return redirect(next_page)
     return render_template('driver_login.html', title='Sign In', form=form)
