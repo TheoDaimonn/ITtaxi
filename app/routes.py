@@ -17,6 +17,7 @@ def choice():
 
 
 @app.route('/index')
+@app.route('/profile')
 @login_required('user')
 def index():
 
@@ -76,7 +77,7 @@ def order():
         db.session.commit()
         flash('Thanks for your order, Taxi is on the way!')
         return redirect(url_for('index'))
-    return render_template('order.html', title='Order', form=form)
+    return render_template('new-order.html', title='Order', form=form)
 
 
 @app.route('/driver_register', methods=['GET', 'POST'])
