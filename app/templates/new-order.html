@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
@@ -18,32 +18,39 @@
                 <div class="sidebar">
                     <div class="sidebar-item">
                         <a href="index.html">
-                            <img class="logo" src="images/logo.svg" alt="logo">
+                            <img class="logo" src="static/css/images/logo.svg" alt="logo">
                         </a>
                     </div>
                     <div class="sidebar-item">
-                        <img class="home-img" src="images/home.svg" alt="home">
+                        <img class="home-img" src="static/css/images/home.svg" alt="home">
                         <a href="profile.html">
-                            <img class="profile-img" src="images/profile.svg" alt="profile">
+                            <img class="profile-img" src="static/css/images/profile.svg" alt="profile">
                         </a>
                         <a href="history.html">
-                            <img class="history-img" src="images/history.svg" alt="history">
+                            <img class="history-img" src="static/css/images/history.svg" alt="history">
                         </a>
-                        <img class="phone-img" src="images/phone.svg" alt="phone">
-                        <img class="email-img" src="images/email.svg" alt="email">
-                        <img class="inst-img" src="images/inst.svg" alt="inst">
+                        <img class="phone-img" src="static/css/images/phone.svg" alt="phone">
+                        <img class="email-img" src="static/css/images/email.svg" alt="email">
+                        <img class="inst-img" src="static/css/images/inst.svg" alt="inst">
                     </div>
                 </div>
                 <div class="content__main">
                     <div class="content__container">
                         <h2 class="content__title">New order</h2>
                         <form class="new-order__info profile__info">
+                            {{ form.hidden_tag() }}
                             <ul>
                                 <li>
-                                    <input type="text" name="from" placeholder="From" required />
+                                    {{ form.place_start(type="text", placeholder="From", required=True) }}<br>
+                                    {% for error in form.place_start.errors %}
+                                        <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
                                 </li>
                                 <li>
-                                    <input type="text" name="from" placeholder="To" required />
+                                    {{ form.place_end(type="text", placeholder="To", required=True) }}<br>
+                                    {% for error in form.place_end.errors %}
+                                        <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
                                 </li>
                                 <li>
                                     <div class="switch">
