@@ -2,7 +2,9 @@
 
 {% block content %}
     <h1>Привет, {{ current_user.first_name }}!</h1>
-    <a href="{{ url_for('show_orders') }}" class="btn btn-primary">Принять заказ</a>
+    <div>
+        <a href="{{ url_for('show_orders') }}" class="btn btn-primary">Принять заказ</a>
+    </div>
     {% for order in orders %}
     <div><p>Старт поездки: {{ order.place_start }} Финиш: {{ order.place_end }} Цена: {{order.price}} Имя заказчика: {{order.user.first_name}}</p></div>
     {% endfor %}

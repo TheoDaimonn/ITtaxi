@@ -28,9 +28,12 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    logout_user()
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        if current_user.role == 'user':
+            return redirect(url_for('index'))
+        else:
+            logout_user()
+    
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
@@ -54,7 +57,6 @@ def logout():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    logout_user()
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = RegistrationForm()
@@ -85,7 +87,6 @@ def order():
 
 @app.route('/driver_register', methods=['GET', 'POST'])
 def driver_register():
-    logout_user()
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = DriverRegistrationForm()
@@ -104,9 +105,11 @@ def driver_register():
 
 @app.route('/driver_login', methods=['GET', 'POST'])
 def driver_login():
-    logout_user()
     if current_user.is_authenticated:
-        return redirect("driver_main")
+        if current_user.role == 'driver':
+            return redirect("driver_main")
+        else:
+            logout_user()
     form = LoginForm()
     if form.validate_on_submit():
         driver = Driver.query.filter_by(email=form.email.data).first()
