@@ -28,6 +28,7 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    logout_user()
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = LoginForm()
@@ -48,11 +49,12 @@ def login():
 @app.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for('choice'))
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    logout_user()
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = RegistrationForm()
@@ -83,6 +85,7 @@ def order():
 
 @app.route('/driver_register', methods=['GET', 'POST'])
 def driver_register():
+    logout_user()
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = DriverRegistrationForm()
@@ -101,6 +104,7 @@ def driver_register():
 
 @app.route('/driver_login', methods=['GET', 'POST'])
 def driver_login():
+    logout_user()
     if current_user.is_authenticated:
         return redirect("driver_main")
     form = LoginForm()
@@ -115,7 +119,7 @@ def driver_login():
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('driver_main')
         return redirect(next_page)
-    return render_template('driver_login.html', title='Sign In', form=form)
+    return render_template('NEW_driver_login.html', title='Sign In', form=form)
 
 
 @app.route('/driver_main')

@@ -1,65 +1,27 @@
-<!DOCTYPE html>
-<html lang="ru">
+{% extends "driver_base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Доступные Заказы</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../static/css/style.css">
-</head>
+{% block title %}Доступные Заказы{% endblock %}
 
-<body>
-    <div class="choose-order-page">
-        <div class="container">
-            <div class="content">
-                <div class="sidebar">
-                    <div class="sidebar-item">
-                        <a href="{{url_for('choice')}}">
-                            <img class="logo" src="../static/css/images/logo.svg" alt="logo">
-                        </a>
-                    </div>
-                    <div class="sidebar-item">
-                        <img class="home-img" src="../static/css/images/home.svg" alt="home">
-                        <a href="{{url_for('driver_main')}}">
-                            <img class="profile-img" src="../static/css/images/profile.svg" alt="profile">
-                        </a>
-                        <a href="history.html">
-                            <img class="history-img" src="../static/css/images/history.svg" alt="history">
-                        </a>
-                        <img class="phone-img" src="../static/css/images/phone.svg" alt="phone">
-                        <img class="email-img" src="../static/css/images/email.svg" alt="email">
-                        <img class="inst-img" src="../static/css/images/inst.svg" alt="inst">
-                    </div>
-                </div>
-                <div class="content__main">
-                    <div class="content__container">
-                        <div class="available-order__container orders__container">
-                            {% with messages = get_flashed_messages(with_categories=true) %}
-                                {% if messages %}
-                                    {% for category, message in messages %}
-                                        <div class="alert alert-{{ category }}">{{ message }}</div>
-                                    {% endfor %}
-                                {% endif %}
-                            {% endwith %}
-                            {% for order in orders %}
-                                <div class="orders-item available-order">
-                                    <div class="orders-item-text">From: {{ order.place_start }}</div>
-                                    <div class="orders-item-text">To: {{ order.place_end }}</div>
-                                    <div class="orders-item-text">Price: {{ order.price }}</div>
-                                    <form action="{{ url_for('take_order', order_id=order.id) }}" method="post">
-                                        <button class="profile__info-btn apply-order-btn" type="submit">Apply order</button>
-                                    </form>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
+{% block content %}
+<div class="content__container">
+    <div class="available-order__container orders__container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        {% for order in orders %}
+            <div class="orders-item available-order">
+                <div class="orders-item-text">From: {{ order.place_start }}</div>
+                <div class="orders-item-text">To: {{ order.place_end }}</div>
+                <div class="orders-item-text">Price: {{ order.price }}</div>
+                <form action="{{ url_for('take_order', order_id=order.id) }}" method="post">
+                    <button class="profile__info-btn apply-order-btn" type="submit">Apply order</button>
+                </form>
             </div>
-        </div>
+        {% endfor %}
     </div>
-</body>
-
-</html>
+</div>
+{% endblock %}

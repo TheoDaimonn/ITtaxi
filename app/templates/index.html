@@ -1,9 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Привет, {{ current_user.first_name }}!</h1>
-    {% for order in orders %}
-    <div><p>Старт поездки: {{ order.place_start }} Финиш: {{ order.place_end }} Цена: {{order.price}} Время заказа: {{order.order_time}}</p></div>
-    {% endfor %}
-    <a href="{{ url_for('order') }}" class="btn btn-primary">Оформить заказ</a>
+<div class="container main__container">
+    <h1>Hello, {{ current_user.first_name }}!</h1>
+    <a href="{{ url_for('order') }}" class="btn btn-primary">Arrange an Order</a>
+
+</div>
+<div class="content__container">
+    <div class="available-order__container orders__container">
+        {% for order in orders %}
+            <div class="orders-item available-order">
+                <div class="orders-item-text">From: {{ order.place_start }}</div>
+                <div class="orders-item-text">To: {{ order.place_end }}</div>
+                <div class="orders-item-text">Price: {{ order.price }}</div>
+                <div class="orders-item-text">Order time: {{ order.order_time }}</div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

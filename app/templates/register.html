@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Регистрация для водителя</title>
+    <title>Регистрация для пользователя</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-
 <body>
     <div class="reg-page">
         <div class="container reg__container">
@@ -22,15 +20,11 @@
                                 <img class="logo" src="../static/css/images/logo.svg" alt="logo">
                             </a>
                         </div>
-                        <div class="sidebar-item">
-                            <img class="phone-img" src="../static/css/images/phone.svg" alt="phone">
-                            <img class="email-img" src="../static/css/images/email.svg" alt="email">
-                            <img class="inst-img" src="../static/css/images/inst.svg" alt="inst">
-                        </div>
                     </div>
                     <div class="reg__main">
                         <h2 class="reg__title">Registration for user</h2>
-                        <form class="reg__form" action="" method="post">
+                        <form class="reg__form" action="{{ url_for('register') }}" method="post">
+    {{ form.hidden_tag() }}
                             <h3 class="title reg__form-title">Sign Up</h3>
                             <ul>
                                 <li>
@@ -73,5 +67,4 @@
         </div>
     </div>
 </body>
-
 </html>

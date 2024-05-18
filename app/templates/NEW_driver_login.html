@@ -4,32 +4,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Сервис по вызову такси - Вход для пользователя</title>
+    <title>Сервис по вызову такси - Вход для водителя</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-
 <body>
     <main class="main">
         <div class="container main__container">
 
             <div class="inner">
                 <form class="main__form" method="post" novalidate>
-                    <h1 class="title main__title">Log in to IT-Taxi as User</h1>
+                    <h1 class="title main__title">Log in to IT-Taxi as Driver</h1>
                     {{ form.hidden_tag() }}
                     <ul>
                         <li>
                             {{ form.email(class_='email', placeholder='Email', required=True) }}<br>
                             {% for error in form.email.errors %}
-                                <span style="color: red;">[{{ error }}]</span>
+                            <span style="color: red;">[{{ error }}]</span>
                             {% endfor %}
                         </li>
                         <li>
                             {{ form.password(type='password', class_='password', placeholder='Password', required=True) }}<br>
                             {% for error in form.password.errors %}
-                                <span style="color: red;">[{{ error }}]</span>
+                            <span style="color: red;">[{{ error }}]</span>
                             {% endfor %}
                         </li>
                         <li>
@@ -43,10 +42,10 @@
                     </ul>
                     <div class="main__sign-container">
                         <div class="main__sign-pass">
-                            <a href="{{ url_for('register') }}">New User? Click to Register!</a>
+                            <a href="{{ url_for('driver_register') }}">New Driver? Click to Register!</a>
                         </div>
                         <div class="main__sign-driver">
-                            <a href="{{ url_for('driver_login') }}">Click to Driver Login!</a>
+                            <a href="{{ url_for('login') }}">Click to User Login!</a>
                         </div>
                     </div>
                 </form>

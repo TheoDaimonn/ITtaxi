@@ -3,70 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login Selection - IT_Taxi</title>
+    <title>IT-Taxi - Login Selection</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .choice-page {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            width: 400px;
-            padding: 20px;
-        }
-        .choice-container {
-            text-align: center;
-            width: 100%;
-        }
-        .choice-title {
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: #333;
-        }
-        .choice-btn {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            font-size: 16px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin-bottom: 15px;
-        }
-        .choice-btn:hover {
-            background-color: #0056b3;
-        }
-    </style>
 </head>
 <body>
-    <div class="choice-page">
-        <div class="choice-container">
-            <h2 class="choice-title">Добро пожаловать в IT_Taxi</h2>
-            <p class="choice-subtitle">Пожалуйста, выберите тип входа:</p>
+    <div class="main">
+        <div class="container main__container">
+
+            <h1 class="title main__title">Welcome to IT-Taxi</h1>
 
             <form action="{{ url_for('login') }}" method="get">
-                <button class="choice-btn" type="submit">Войти как пользователь</button>
+                <button class="main__form-btn" type="submit">Log in as User</button>
             </form>
 
             <form action="{{ url_for('driver_login') }}" method="get">
-                <button class="choice-btn" type="submit">Войти как водитель</button>
+                <button class="main__form-btn" type="submit">Log in as Driver</button>
             </form>
         </div>
     </div>
