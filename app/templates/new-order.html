@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Новый заказ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="new-order-page">
+        <div class="container">
+            <div class="content">
+                <div class="sidebar">
+                    <div class="sidebar-item">
+                        <a href="{{ url_for('index') }}">
+                            <img class="logo" src="{{ url_for('static', filename='css/images/logo.svg') }}" alt="logo">
+                        </a>
+                    </div>
+                    <div class="sidebar-item">
+                        <img class="home-img" src="{{ url_for('static', filename='css/images/home.svg') }}" alt="home">
+                        <a href="{{ url_for('index') }}">
+                            <img class="history-img" src="{{ url_for('static', filename='css/images/history.svg') }}" alt="history">
+                        </a>
+                        <img class="phone-img" src="{{ url_for('static', filename='css/images/phone.svg') }}" alt="phone">
+                        <img class="email-img" src="{{ url_for('static', filename='css/images/email.svg') }}" alt="email">
+                        <img class="inst-img" src="{{ url_for('static', filename='css/images/inst.svg') }}" alt="inst">
+                    </div>
+                </div>
+                <div class="content__main">
+                    <div class="content__container">
+                        <h2 class="content__title">New order</h2>
+                        <form class="new-order__info profile__info" method="POST" action="{{ url_for('order') }}">
+                            {{ form.hidden_tag() }}
+                            <ul>
+                                <li>
+                                    {{ form.place_start(type="text", placeholder="From", required=True) }}<br>
+                                    {% for error in form.place_start.errors %}
+                                        <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
+                                </li>
+                                <li>
+                                    {{ form.place_end(type="text", placeholder="To", required=True) }}<br>
+                                    {% for error in form.place_end.errors %}
+                                        <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
+                                </li>
+                                <li>
+                                    <div class="switch">
+                                        <input type="checkbox" id="toggleSwitch">
+                                        <span class="slider round"></span>
+                                        <label for="cash-checkbox" class="switch-label" id="cash-label">Cash</label>
+                                        <label for="card-checkbox" class="switch-label" id="card-label">Card</label>
+                                        <input type="checkbox" id="cash-checkbox" style="display:none;">
+                                        <input type="checkbox" id="card-checkbox" style="display:none;">
+                                    </div>
+                                </li>
+                                <button class="profile__info-btn" type="submit">Enter</button>
+                            </ul>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var toggleSwitch = document.getElementById('toggleSwitch');
+        var cashCheckbox = document.getElementById('cash-checkbox');
+        var cardCheckbox = document.getElementById('card-checkbox');
+
+        toggleSwitch.addEventListener('change', function() {
+            if (this.checked) {
+                cashCheckbox.checked = true;
+                cardCheckbox.checked = false;
+                console.log('Cash');
+            } else {
+                cashCheckbox.checked = false;
+                cardCheckbox.checked = true;
+                console.log('Card');
+            }
+        });
+
+        cashCheckbox.addEventListener('change', function() {
+            toggleSwitch.checked = this.checked;
+        });
+
+        cardCheckbox.addEventListener('change', function() {
+            toggleSwitch.checked = !this.checked;
+        });
+    </script>
+</body>
+
+</html>
+

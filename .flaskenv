@@ -1,0 +1,2 @@
+FLASK_APP=taxi.py
+FLASK_DEBUG=1

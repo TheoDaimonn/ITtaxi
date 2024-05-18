@@ -1,0 +1,30 @@
+# Ignore PyCharm project files
+.idea/
+*.iml
+
+# Ignore Python compiled files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Ignore virtual environment directories
+venv/
+ENV/
+env/
+venv.bak/
+
+# Ignore logs and databases
+*.log
+*.sqlite3
+
+# Ignore system files
+.DS_Store
+
+# Ignore other environment files
+*.env
+
+# Other possible ignores
+*.swp
+*.swo
+*.swn
