@@ -71,13 +71,19 @@ class Driver(UserMixin, db.Model):
     password_hashed = db.Column(db.String(200), nullable=False)
     orders = db.relationship('Order', backref='driver', lazy='dynamic')
     role = db.Column(db.String(20), default='driver')
-    # status = db.Column(db.String(20), default='inactive', nullable=False)
+    status = db.Column(db.String(20), default='inactive', nullable=False)
+    number_of_ratings = db.Column(db.Integer, default=0, nullable=False)
+    rating = db.Column(db.Float, default=0.0, nullable=False)
 
-    # def change_status(self):
-    #     if self.status == 'inactive':
-    #         self.status = 'active'
-    #     else:
-    #         self.status = 'inactive'
+    def update_rating(self, score):
+        self.rating = self.number_of_ratings * self.rating + score
+        self.number_of_ratings += 1
+
+    def change_status(self):
+        if self.status == 'inactive':
+            self.status = 'active'
+        else:
+            self.status = 'inactive'
 
     def set_password(self, password):
         self.password_hashed = generate_password_hash(password)
