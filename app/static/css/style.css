@@ -201,6 +201,7 @@ body {
 }
 
 .reg__image {
+    background-image: url('css/images/driver-bg.png');
     flex-grow: 1;
     background-position: center;
     background-repeat: no-repeat;
