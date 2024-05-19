@@ -76,7 +76,7 @@ class Driver(UserMixin, db.Model):
     rating = db.Column(db.Float, default=0.0, nullable=False)
 
     def update_rating(self, score):
-        self.rating = self.number_of_ratings * self.rating + score
+        self.rating = (self.number_of_ratings * self.rating + score) / (self.number_of_ratings + 1)
         self.number_of_ratings += 1
 
     def change_status(self):
