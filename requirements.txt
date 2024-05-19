@@ -29,3 +29,4 @@ flask_migrate
 flask_login
 flask_wtf
 email_validator
+pytz

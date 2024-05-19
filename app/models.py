@@ -7,6 +7,7 @@ from app import login
 import random
 from sqlalchemy import event
 from sqlalchemy.schema import DDL
+import pytz
 
 
 class User(UserMixin, db.Model):
@@ -33,8 +34,8 @@ class Order(db.Model):
     place_start = db.Column(db.String(140), nullable=False)
     place_end = db.Column(db.String(140), nullable=False)
     price = db.Column(db.String(140), nullable=False)
-    order_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    order_taked = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    order_time = db.Column(db.DateTime, index=True, nullable=True)
+    order_taked = db.Column(db.DateTime, index=True, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     driver_id = db.Column(db.Integer, db.ForeignKey('driver.id'), nullable=True)
 
@@ -45,7 +46,10 @@ class Order(db.Model):
         self.price = random.randint(1, 200)
 
     def set_order_time(self):
-        self.order_time = datetime.now()
+        self.order_time = datetime.now(pytz.utc).astimezone(pytz.timezone('Europe/Moscow'))
+    
+    def set_order_taked_time(self):
+        self.order_taked = datetime.now(pytz.utc).astimezone(pytz.timezone('Europe/Moscow'))
 
 
 @login.user_loader
@@ -67,6 +71,13 @@ class Driver(UserMixin, db.Model):
     password_hashed = db.Column(db.String(200), nullable=False)
     orders = db.relationship('Order', backref='driver', lazy='dynamic')
     role = db.Column(db.String(20), default='driver')
+    # status = db.Column(db.String(20), default='inactive', nullable=False)
+
+    # def change_status(self):
+    #     if self.status == 'inactive':
+    #         self.status = 'active'
+    #     else:
+    #         self.status = 'inactive'
 
     def set_password(self, password):
         self.password_hashed = generate_password_hash(password)

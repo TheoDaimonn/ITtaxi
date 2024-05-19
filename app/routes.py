@@ -8,7 +8,8 @@ from app.models import User, Order, Driver
 from werkzeug.urls import url_parse
 from app.utils import login_required
 from sqlalchemy import func
-from datetime import datetime
+from datetime import datetime, timedelta
+import pytz
 
 
 @app.route('/')
@@ -147,7 +148,7 @@ def take_order(order_id):
         flash('This order has already been taken.', 'warning')
         return redirect(url_for('show_orders'))
     order.driver_id = current_user.id
-    order.order_taked = datetime.utcnow()
+    order.set_order_taked_time()
     db.session.commit()
     flash('Order taken successfully!', 'success')
     return redirect(url_for('show_orders'))
