@@ -1,0 +1,19 @@
+{% extends "driver_base.html" %}
+
+{% block content %}
+    <h1>Активный заказ</h1>
+    {% if active_order %}
+        <div>
+            <p>Старт: {{ active_order.place_start }}</p>
+            <p>Финиш: {{ active_order.place_end }}</p>
+            <p>Цена: {{ active_order.price }}</p>
+            <p>Имя заказчика: {{ active_order.user.first_name }}</p>
+        </div>
+        <form action="{{ url_for('complete_order', order_id=active_order.id) }}" method="post">
+            <button type="submit" class="btn btn-success">Завершить заказ</button>
+        </form>
+    {% else %}
+        <p>У вас нет активных заказов.</p>
+    {% endif %}
+{% endblock %}
+

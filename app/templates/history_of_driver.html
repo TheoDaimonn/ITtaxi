@@ -1,0 +1,14 @@
+{% extends "driver_base.html" %}
+
+{% block content %}
+    <h1>История заказов</h1>
+    {% if orders %}
+        <ul>
+            {% for order in orders %}
+                <li>Старт: {{ order.place_start }}, Финиш: {{ order.place_end }}, Цена: {{ order.price }}, Заказчик: {{ order.user.first_name }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>У вас пока нет завершенных заказов.</p>
+    {% endif %}
+{% endblock %}

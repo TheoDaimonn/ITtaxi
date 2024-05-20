@@ -2,7 +2,7 @@ from urllib import request
 
 from flask import render_template, flash, redirect, url_for, request
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, OrderForm, DriverRegistrationForm, TakeOrderForm
+from app.forms import LoginForm, RegistrationForm, OrderForm, DriverRegistrationForm, TakeOrderForm, RateOrderForm
 from flask_login import login_user, logout_user, current_user
 from app.models import User, Order, Driver
 from werkzeug.urls import url_parse
@@ -144,12 +144,74 @@ def show_orders():
 @login_required('driver')
 def take_order(order_id):
     order = Order.query.get_or_404(order_id)
+    if current_user.status == "active":
+        flash("You already have order", 'warning')
+        return redirect(url_for('show_orders'))
     if order.driver_id is not None:
         flash('This order has already been taken.', 'warning')
         return redirect(url_for('show_orders'))
+    current_user.change_status()
     order.driver_id = current_user.id
     order.set_order_taked_time()
     db.session.commit()
     flash('Order taken successfully!', 'success')
     return redirect(url_for('show_orders'))
 
+
+@app.route('/history_of_driver')
+@login_required('driver')
+def history_of_driver():
+    user_orders = current_user.orders.all()
+    return render_template('history_of_driver.html', title='History', orders=user_orders)
+
+
+@app.route('/active_order')
+@login_required('driver')
+def active_order():
+    order = current_user.get_last_order()
+    status = current_user.status
+    if status == 'inactive':
+        return redirect(url_for('driver_main'))
+    return render_template('active_order.html', title='Active Order', active_order=order)
+
+
+@app.route('/complete_order/<int:order_id>', methods=['POST'])
+@login_required('driver')
+def complete_order(order_id):
+    order = Order.query.get_or_404(order_id)
+    if order.driver_id != current_user.id:
+        flash('Вы не можете завершить этот заказ.', 'danger')
+        return redirect(url_for('active_order'))
+    order.order_finished = datetime.utcnow()
+    current_user.change_status()
+    db.session.commit()
+    flash('Заказ завершен.', 'success')
+    return redirect(url_for('active_order'))
+
+
+@app.route('/history_of_user_orders')
+@login_required('user')
+def history_of_user_orders():
+    orders = Order.query.filter_by(user_id=current_user.id).all()
+    return render_template('history_of_user_orders.html', title='История заказов', orders=orders)
+
+
+@app.route('/rate_order/<int:order_id>', methods=['GET', 'POST'])
+@login_required('user')
+def rate_order(order_id):
+    order = Order.query.get_or_404(order_id)
+    if order.user_id != current_user.id:
+        flash('You cannot rate this order.', 'danger')
+        return redirect(url_for('history_of_user_orders'))
+    form = RateOrderForm()
+    if form.validate_on_submit():
+        driver = Driver.query.get(order.driver_id)
+        if driver:
+            driver.rating = (driver.rating * driver.number_of_ratings + form.rating.data) / (driver.number_of_ratings + 1)
+            driver.number_of_ratings += 1
+            db.session.commit()
+            flash('Order has been rated.', 'success')
+        else:
+            flash('Driver not found for this order.', 'danger')
+        return redirect(url_for('history_of_user_orders'))
+    return render_template('rate_order.html', title='Rate Order', form=form, order=order)

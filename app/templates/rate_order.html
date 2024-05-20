@@ -3,10 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Профиль - Список заказов</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <title>Оценить заказ</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
@@ -31,20 +28,17 @@
                 </div>
                 <div class="content__main">
                     <div class="container main__container">
-                        <h1>Hello, {{ current_user.first_name }}!</h1>
-                        <a href="{{ url_for('order') }}" class="btn btn-primary">Arrange an Order</a>
-                    </div>
-                    <div class="orders__container">
-                        <div class="available-order__container orders__container">
-                            {% for order in orders[::-1] %}
-                                <div class="orders-item available-order">
-                                    <div class="orders-item-text">From: {{ order.place_start }}</div>
-                                    <div class="orders-item-text">To: {{ order.place_end }}</div>
-                                    <div class="orders-item-text">Price: {{ order.price }}</div>
-                                    <div class="orders-item-text">Order time: {{ order.order_time }}</div>
-                                </div>
-                            {% endfor %}
-                        </div>
+                        <h1>Оценить заказ</h1>
+                        <form method="POST" action="">
+                            {{ form.hidden_tag() }}
+                            <div class="form-group">
+                                {{ form.rating.label }}<br>
+                                {{ form.rating(size=5, class="form-control") }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.submit(class="btn btn-primary") }}
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField
+from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, NumberRange
 from app.models import User, Driver
 
 
@@ -53,3 +53,8 @@ class DriverRegistrationForm(FlaskForm):
 
 class TakeOrderForm(FlaskForm):
     submit = SubmitField('Take Order')
+
+
+class RateOrderForm(FlaskForm):
+    rating = IntegerField('Rating', validators=[DataRequired(), NumberRange(min=1, max=5)])
+    submit = SubmitField('Submit')

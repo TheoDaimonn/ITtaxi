@@ -36,6 +36,7 @@ class Order(db.Model):
     price = db.Column(db.String(140), nullable=False)
     order_time = db.Column(db.DateTime, index=True, nullable=True)
     order_taked = db.Column(db.DateTime, index=True, nullable=True)
+    order_finished = db.Column(db.DateTime, index=True, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     driver_id = db.Column(db.Integer, db.ForeignKey('driver.id'), nullable=True)
 
@@ -90,6 +91,9 @@ class Driver(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hashed, password)
+
+    def get_last_order(self):
+        return Order.query.filter_by(driver_id=self.id).order_by(Order.order_time.desc()).first()
 
     def __repr__(self):
         return '<Driver {}, {}, {}, {}, {}>'.format(self.first_name, self.last_name, self.middle_name, self.email, self.password_hashed)
