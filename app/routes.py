@@ -203,12 +203,15 @@ def rate_order(order_id):
     if order.user_id != current_user.id:
         flash('You cannot rate this order.', 'danger')
         return redirect(url_for('history_of_user_orders'))
+    if order.score > 0:
+        return redirect(url_for('index'))
     form = RateOrderForm()
     if form.validate_on_submit():
         driver = Driver.query.get(order.driver_id)
         if driver:
             driver.rating = (driver.rating * driver.number_of_ratings + form.rating.data) / (driver.number_of_ratings + 1)
             driver.number_of_ratings += 1
+            order.score = form.rating.data
             db.session.commit()
             flash('Order has been rated.', 'success')
         else:

@@ -39,6 +39,7 @@ class Order(db.Model):
     order_finished = db.Column(db.DateTime, index=True, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     driver_id = db.Column(db.Integer, db.ForeignKey('driver.id'), nullable=True)
+    score = db.Column(db.Integer, default=0)
 
     def __repr__(self):
         return '<Order: start - {}, finish - {}, price - {}, time - {}>'.format(self.place_start, self.place_end, self.price, self.order_time)
