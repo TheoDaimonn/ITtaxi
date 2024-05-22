@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
+<body class="index-page">
     <div class="list-order-page">
         <div class="container">
             <div class="content">
@@ -35,17 +35,22 @@
                     <div class="content__container">
                         <h1 class="greeting">Hello, {{ current_user.first_name }}!</h1>
                         <div class="arrange-order-container">
-                            <a href="{{ url_for('order') }}" class="btn btn-primary arrange-order-btn">Arrange an Order</a>
+                            <a href="{{ url_for('order') }}" class="arrange-order-btn">Arrange an Order</a>
                         </div>
                     </div>
                     <div class="orders__container">
                         <div class="available-order__container">
-                            {% for order in orders[::-1] %}
+                            {% for order in orders %}
                                 <div class="orders-item available-order">
                                     <div class="orders-item-text"><strong>From:</strong> {{ order.place_start }}</div>
                                     <div class="orders-item-text"><strong>To:</strong> {{ order.place_end }}</div>
                                     <div class="orders-item-text"><strong>Price:</strong> {{ order.price }}</div>
                                     <div class="orders-item-text"><strong>Order time:</strong> {{ order.order_time }}</div>
+                                    {% if order.order_taked %}
+                                        <div class="orders-item-text"><strong>Taken time:</strong> {{ order.order_taked }}</div>
+                                        <div class="orders-item-text"><strong>Driver:</strong> {{ order.driver.first_name }} {{ order.driver.last_name }}</div>
+                                        <div class="orders-item-text"><strong>Car model:</strong> {{ order.driver.car_model }}</div>
+                                    {% endif %}
                                 </div>
                             {% endfor %}
                         </div>

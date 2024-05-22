@@ -21,9 +21,11 @@ def choice():
 @app.route('/index')
 @login_required('user')
 def index():
-
-    user_orders = current_user.orders.all()
-    return render_template('index.html', title='Home', orders=user_orders)
+    orders = Order.query.filter(
+        Order.user_id == current_user.id,
+        db.or_(Order.order_taked.is_(None), Order.order_finished.is_(None))
+    ).all()
+    return render_template('index.html', orders=orders)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -38,7 +40,7 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user is None or not user.check_password(form.password.data):
-            flash('Invalid email or password!')
+            flash('Invalid email or password!', 'danger')  
             return redirect(url_for('login'))
         logout_user()
         login_user(user, remember=form.remember_me.data)
@@ -46,12 +48,14 @@ def login():
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('index')
         return redirect(next_page)
-    return render_template('login.html',  title='Sign In', form=form)
+    return render_template('login.html', title='Sign In', form=form)
 
 
-@app.route('/logout')
+
+@app.route('/logout', methods=['POST'])
 def logout():
     logout_user()
+    flash('You have been logged out.', 'success')
     return redirect(url_for('choice'))
 
 
@@ -75,14 +79,26 @@ def register():
 def order():
     form = OrderForm()
     if form.validate_on_submit():
-        order = Order(place_start=form.place_start.data, place_end=form.place_end.data, user_id=current_user.id)
-        order.set_order_time()
-        order.set_price(form.place_start.data, form.place_end.data)
-        db.session.add(order)
+        # Проверка наличия свободных водителей
+        available_driver = Driver.query.filter_by(status='inactive').first()
+        if available_driver is None:
+            flash('No available drivers. Please wait.')
+            return redirect(url_for('order'))
+
+        # Создание заказа и привязка к водителю
+        new_order = Order(
+            place_start=form.place_start.data,
+            place_end=form.place_end.data,
+            user_id=current_user.id
+        )
+        new_order.set_price(form.place_start.data, form.place_end.data)
+        new_order.set_order_time()
+        db.session.add(new_order)
         db.session.commit()
-        flash('Thanks for your order, Taxi is on the way!')
+        
+        flash('Your order has been created successfully!')
         return redirect(url_for('index'))
-    return render_template('new-order.html', title='Order', form=form)
+    return render_template('new-order.html', title='New Order', form=form)
 
 
 @app.route('/driver_register', methods=['GET', 'POST'])
@@ -191,7 +207,7 @@ def complete_order(order_id):
 @app.route('/history_of_user_orders')
 @login_required('user')
 def history_of_user_orders():
-    orders = Order.query.filter_by(user_id=current_user.id).all()
+    orders = Order.query.filter_by(user_id=current_user.id).filter(Order.order_finished.isnot(None)).all()
     return render_template('history_of_user_orders.html', title='История заказов', orders=orders)
 
 

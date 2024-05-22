@@ -6,7 +6,7 @@
     <title>История заказов</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
+<body class="history-page">
     <div class="list-order-page">
         <div class="container">
             <div class="content">
@@ -40,7 +40,10 @@
                                         <th>Место окончания</th>
                                         <th>Цена</th>
                                         <th>Дата заказа</th>
-                                        <th>Действия</th>
+                                        <th>Дата окончания</th>
+                                        <th>Водитель</th>
+                                        <th>Модель машины</th>
+                                        <th>Оценка</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -51,8 +54,15 @@
                                         <td>{{ order.place_end }}</td>
                                         <td>{{ order.price }}</td>
                                         <td>{{ order.order_time }}</td>
+                                        <td>{{ order.order_finished }}</td>
+                                        <td>{{ order.driver.first_name }} {{ order.driver.last_name }}</td>
+                                        <td>{{ order.driver.car_model }}</td>
                                         <td>
-                                            <a href="{{ url_for('rate_order', order_id=order.id) }}" class="btn btn-secondary">Оценить заказ</a>
+                                            {% if order.score > 0 %}
+                                                {{ order.score }}
+                                            {% else %}
+                                                <a href="{{ url_for('rate_order', order_id=order.id) }}" class="btn btn-secondary">Оценить заказ</a>
+                                            {% endif %}
                                         </td>
                                     </tr>
                                     {% endfor %}

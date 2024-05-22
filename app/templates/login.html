@@ -49,6 +49,15 @@
                             <a href="{{ url_for('driver_login') }}">Click to Driver Login!</a>
                         </div>
                     </div>
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flashes">
+                        {% for category, message in messages %}
+                            <div class="alert {{ category }}">{{ message }}</div>
+                        {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% endwith %}
                 </form>
             </div>
         </div>

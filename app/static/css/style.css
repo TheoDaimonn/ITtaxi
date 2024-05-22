@@ -1,3 +1,5 @@
+/* style.css */
+
 *,
 *::before,
 *::after {
@@ -16,6 +18,50 @@ body {
     font-size: 15px;
     font-weight: 400;
     color: #212529;
+}
+
+body.index-page {
+    background-color: #212529;
+    color: #fff;
+    font-family: "Inter", sans-serif;
+}
+
+body.order-page {
+    background-color: transparent;
+    color: #fff;
+    font-family: "Inter", sans-serif;
+}
+
+body.order-page .content__main {
+    background-color: transparent;
+}
+
+.index-page .list-order-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.index-page .container {
+    flex: 1;
+}
+
+.index-page .content {
+    flex: 1;
+    display: flex;
+}
+
+.index-page .content__main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.index-page .orders__container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 a {
@@ -37,13 +83,21 @@ section,
     align-items: center;
 }
 
-body {
+body:not(.history-page) {
     background-image: url('images/background.png');
     background-position: center;
     background-repeat: no-repeat;
     background-size: 105% 105%;
     color: #fff;
     font-family: "Inter", sans-serif;
+}
+
+body.history-page {
+    background-color: #191d1f;
+}
+
+body.history-page .content__title {
+    color: #fff;
 }
 
 .main-container {
@@ -324,19 +378,23 @@ body {
 }
 
 .orders-item {
-    width: 380px;
-    height: 220px;
-    margin-bottom: 20px;
-    padding-top: 35px;
-    background-color: #2B2B2B;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
+    width: 400px; /* Увеличьте ширину элементов */
+    padding: 20px;
+    margin: 10px 0;
+    background-color: #2b2b2b;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    word-wrap: break-word; /* Добавьте перенос слов */
+}
+
+.orders-item:hover {
+    transform: translateY(-5px);
 }
 
 .orders-item-text {
-    margin-bottom: 15px;
-    font-size: 15px;
+    margin-bottom: 10px;
+    font-size: 16px;
 }
 
 .orders-item div {
@@ -432,6 +490,7 @@ input:checked + .slider:before {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    gap: 20px;
 }
 
 .available-order {
@@ -456,6 +515,8 @@ input:checked + .slider:before {
     margin-bottom: 10px;
     border: 1px solid transparent;
     border-radius: 4px;
+    background-color: #f8d7da; /* light red background for error messages */
+    color: #721c24; /* dark red text for error messages */
 }
 
 .alert.success {
@@ -468,6 +529,12 @@ input:checked + .slider:before {
     color: #721c24;
     background-color: #f8d7da;
     border-color: #f5c6cb;
+}
+
+.alert.warning {
+    color: #856404;
+    background-color: #fff3cd;
+    border-color: #ffeeba;
 }
 
 /* Добавленные стили для index.html */
@@ -501,7 +568,7 @@ input:checked + .slider:before {
 .orders-item {
     width: 300px;
     padding: 20px;
-    margin: 10px;
+    margin: 10px 0;
     background-color: #2b2b2b;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);

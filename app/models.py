@@ -1,7 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask_login import UserMixin
 from app import login
 import random
@@ -39,6 +39,7 @@ class Order(db.Model):
     order_finished = db.Column(db.DateTime, index=True, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     driver_id = db.Column(db.Integer, db.ForeignKey('driver.id'), nullable=True)
+    driver = db.relationship('Driver', back_populates='orders')
     score = db.Column(db.Integer, default=0)
 
     def __repr__(self):
@@ -79,6 +80,8 @@ class Driver(UserMixin, db.Model):
     status = db.Column(db.String(20), default='inactive', nullable=False)
     number_of_ratings = db.Column(db.Integer, default=0, nullable=False)
     rating = db.Column(db.Float, default=0.0, nullable=False)
+    orders = db.relationship('Order', back_populates='driver')
+
 
     def update_rating(self, score):
         self.rating = (self.number_of_ratings * self.rating + score) / (self.number_of_ratings + 1)
