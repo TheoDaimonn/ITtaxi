@@ -58,3 +58,15 @@ class TakeOrderForm(FlaskForm):
 class RateOrderForm(FlaskForm):
     rating = IntegerField('Rating', validators=[DataRequired(), NumberRange(min=1, max=5)])
     submit = SubmitField('Submit')
+
+
+class UpdateProfileForm(FlaskForm):
+    first_name = StringField('First Name', validators=[DataRequired()])
+    last_name = StringField('Last Name', validators=[DataRequired()])
+    submit = SubmitField('Update Name')
+
+class ChangePasswordForm(FlaskForm):
+    old_password = PasswordField('Old Password', validators=[DataRequired()])
+    new_password = PasswordField('New Password', validators=[DataRequired()])
+    new_password2 = PasswordField('Repeat New Password', validators=[DataRequired(), EqualTo('new_password')])
+    submit = SubmitField('Change Password')

@@ -20,7 +20,7 @@
                         <a href="{{ url_for('index') }}">
                             <img class="home-img" src="../static/css/images/home.svg" alt="home">
                         </a>
-                        <a href="{{ url_for('index') }}">
+                        <a href="{{ url_for('profile') }}">
                             <img class="profile-img" src="../static/css/images/profile.svg" alt="profile">
                         </a>
                         <a href="{{ url_for('history_of_user_orders') }}">
@@ -29,34 +29,36 @@
                     </div>
                 </div>
                 <div class="content__main">
-                    <div class="container main__container">
-                        <h1>История заказов</h1>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Место начала</th>
-                                    <th>Место окончания</th>
-                                    <th>Цена</th>
-                                    <th>Дата заказа</th>
-                                    <th>Действия</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for order in orders %}
-                                <tr>
-                                    <td>{{ order.id }}</td>
-                                    <td>{{ order.place_start }}</td>
-                                    <td>{{ order.place_end }}</td>
-                                    <td>{{ order.price }}</td>
-                                    <td>{{ order.order_time }}</td>
-                                    <td>
-                                        <a href="{{ url_for('rate_order', order_id=order.id) }}" class="btn btn-secondary">Оценить заказ</a>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                    <div class="content__container">
+                        <h1 class="content__title">История заказов</h1>
+                        <div class="orders__table">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Место начала</th>
+                                        <th>Место окончания</th>
+                                        <th>Цена</th>
+                                        <th>Дата заказа</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for order in orders %}
+                                    <tr>
+                                        <td>{{ order.id }}</td>
+                                        <td>{{ order.place_start }}</td>
+                                        <td>{{ order.place_end }}</td>
+                                        <td>{{ order.price }}</td>
+                                        <td>{{ order.order_time }}</td>
+                                        <td>
+                                            <a href="{{ url_for('rate_order', order_id=order.id) }}" class="btn btn-secondary">Оценить заказ</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -64,4 +66,3 @@
     </div>
 </body>
 </html>
-

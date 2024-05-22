@@ -2,7 +2,7 @@ from urllib import request
 
 from flask import render_template, flash, redirect, url_for, request
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, OrderForm, DriverRegistrationForm, TakeOrderForm, RateOrderForm
+from app.forms import LoginForm, RegistrationForm, OrderForm, DriverRegistrationForm, TakeOrderForm, RateOrderForm, UpdateProfileForm, ChangePasswordForm
 from flask_login import login_user, logout_user, current_user
 from app.models import User, Order, Driver
 from werkzeug.urls import url_parse
@@ -19,7 +19,6 @@ def choice():
 
 
 @app.route('/index')
-@app.route('/profile')
 @login_required('user')
 def index():
 
@@ -209,8 +208,7 @@ def rate_order(order_id):
     if form.validate_on_submit():
         driver = Driver.query.get(order.driver_id)
         if driver:
-            driver.rating = (driver.rating * driver.number_of_ratings + form.rating.data) / (driver.number_of_ratings + 1)
-            driver.number_of_ratings += 1
+            driver.update_rating(form.rating.data)
             order.score = form.rating.data
             db.session.commit()
             flash('Order has been rated.', 'success')
@@ -218,3 +216,57 @@ def rate_order(order_id):
             flash('Driver not found for this order.', 'danger')
         return redirect(url_for('history_of_user_orders'))
     return render_template('rate_order.html', title='Rate Order', form=form, order=order)
+
+
+@app.route('/profile', methods=['GET', 'POST'])
+@login_required('user')
+def profile():
+    update_form = UpdateProfileForm()
+    change_password_form = ChangePasswordForm()
+
+    if update_form.validate_on_submit() and update_form.submit.data:
+        current_user.first_name = update_form.first_name.data
+        current_user.last_name = update_form.last_name.data
+        db.session.commit()
+        flash('Name updated successfully', 'success')
+        return redirect(url_for('profile'))
+
+    if change_password_form.validate_on_submit() and change_password_form.submit.data:
+        if not current_user.check_password(change_password_form.old_password.data):
+            flash('Incorrect old password', 'danger')
+            return render_template('profile.html', user=current_user, trip_count=Order.query.filter_by(user_id=current_user.id).count(), update_form=update_form, change_password_form=change_password_form)
+        else:
+            current_user.set_password(change_password_form.new_password.data)
+            db.session.commit()
+            flash('Password changed successfully', 'success')
+            return redirect(url_for('profile'))
+
+    trip_count = Order.query.filter_by(user_id=current_user.id).count()
+    update_form.first_name.data = current_user.first_name
+    update_form.last_name.data = current_user.last_name
+
+    return render_template('profile.html', user=current_user, trip_count=trip_count, update_form=update_form, change_password_form=change_password_form)
+
+@app.route('/update_profile', methods=['POST'])
+@login_required('user')
+def update_profile():
+    form = UpdateProfileForm()
+    if form.validate_on_submit():
+        current_user.first_name = form.first_name.data
+        current_user.last_name = form.last_name.data
+        db.session.commit()
+        flash('Profile updated successfully.', 'success')
+    return redirect(url_for('profile'))
+
+@app.route('/change_password', methods=['POST'])
+@login_required('user')
+def change_password():
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        if not current_user.check_password(form.old_password.data):
+            flash('Incorrect old password.', 'danger')
+            return redirect(url_for('profile'))
+        current_user.set_password(form.new_password.data)
+        db.session.commit()
+        flash('Password changed successfully.', 'success')
+    return redirect(url_for('profile'))

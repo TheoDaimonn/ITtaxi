@@ -23,7 +23,7 @@
                         <a href="{{ url_for('index') }}">
                             <img class="home-img" src="../static/css/images/home.svg" alt="home">
                         </a>
-                        <a href="{{ url_for('index') }}">
+                        <a href="{{ url_for('profile') }}">
                             <img class="profile-img" src="../static/css/images/profile.svg" alt="profile">
                         </a>
                         <a href="{{ url_for('history_of_user_orders') }}">
@@ -32,18 +32,20 @@
                     </div>
                 </div>
                 <div class="content__main">
-                    <div class="container main__container">
-                        <h1>Hello, {{ current_user.first_name }}!</h1>
-                        <a href="{{ url_for('order') }}" class="btn btn-primary">Arrange an Order</a>
+                    <div class="content__container">
+                        <h1 class="greeting">Hello, {{ current_user.first_name }}!</h1>
+                        <div class="arrange-order-container">
+                            <a href="{{ url_for('order') }}" class="btn btn-primary arrange-order-btn">Arrange an Order</a>
+                        </div>
                     </div>
                     <div class="orders__container">
-                        <div class="available-order__container orders__container">
+                        <div class="available-order__container">
                             {% for order in orders[::-1] %}
                                 <div class="orders-item available-order">
-                                    <div class="orders-item-text">From: {{ order.place_start }}</div>
-                                    <div class="orders-item-text">To: {{ order.place_end }}</div>
-                                    <div class="orders-item-text">Price: {{ order.price }}</div>
-                                    <div class="orders-item-text">Order time: {{ order.order_time }}</div>
+                                    <div class="orders-item-text"><strong>From:</strong> {{ order.place_start }}</div>
+                                    <div class="orders-item-text"><strong>To:</strong> {{ order.place_end }}</div>
+                                    <div class="orders-item-text"><strong>Price:</strong> {{ order.price }}</div>
+                                    <div class="orders-item-text"><strong>Order time:</strong> {{ order.order_time }}</div>
                                 </div>
                             {% endfor %}
                         </div>
