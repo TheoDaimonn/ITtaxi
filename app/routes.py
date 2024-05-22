@@ -89,7 +89,7 @@ def order():
 @app.route('/driver_register', methods=['GET', 'POST'])
 def driver_register():
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('driver_main'))
     form = DriverRegistrationForm()
     if form.validate_on_submit():
         driver = Driver(first_name=form.first_name.data, last_name=form.last_name.data, middle_name=form.middle_name.data, car_model=form.car_model.data, license_plate=form.license_plate.data, email=form.email.data)
@@ -100,7 +100,7 @@ def driver_register():
         db.session.add(driver)
         db.session.commit()
         flash('Thanks for registering!')
-        return redirect(url_for('login'))
+        return redirect(url_for('driver_login'))
     return render_template('driver_register.html', title='Register', form=form)
 
 
@@ -182,7 +182,7 @@ def complete_order(order_id):
     if order.driver_id != current_user.id:
         flash('Вы не можете завершить этот заказ.', 'danger')
         return redirect(url_for('active_order'))
-    order.order_finished = datetime.utcnow()
+    order.set_order_finished_time()
     current_user.change_status()
     db.session.commit()
     flash('Заказ завершен.', 'success')

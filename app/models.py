@@ -53,6 +53,9 @@ class Order(db.Model):
     def set_order_taked_time(self):
         self.order_taked = datetime.now(pytz.utc).astimezone(pytz.timezone('Europe/Moscow'))
 
+    def set_order_finished_time(self):
+        self.order_finished = datetime.now(pytz.utc).astimezone(pytz.timezone('Europe/Moscow'))
+
 
 @login.user_loader
 def load_user(id):
