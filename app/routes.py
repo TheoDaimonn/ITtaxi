@@ -96,7 +96,7 @@ def order():
         db.session.add(new_order)
         db.session.commit()
         
-        flash('Your order has been created successfully!')
+        flash('Your order has been created successfully!', 'succes')
         return redirect(url_for('index'))
     return render_template('new-order.html', title='New Order', form=form)
 

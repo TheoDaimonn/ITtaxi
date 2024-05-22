@@ -11,16 +11,16 @@
 </head>
 <body>
     <div class="main">
-        <div class="container main__container">
+        <div class="container main__container choise_login">
 
             <h1 class="title main__title">Welcome to IT-Taxi</h1>
 
             <form action="{{ url_for('login') }}" method="get">
-                <button class="main__form-btn" type="submit">Log in as User</button>
+                <button class="main__form-btn choise-btn" type="submit">Log in as User</button>
             </form>
 
             <form action="{{ url_for('driver_login') }}" method="get">
-                <button class="main__form-btn" type="submit">Log in as Driver</button>
+                <button class="main__form-btn choise-btn" type="submit">Log in as Driver</button>
             </form>
         </div>
     </div>

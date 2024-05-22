@@ -24,7 +24,7 @@
                     <div class="reg__main">
                         <h2 class="reg__title">Registration for user</h2>
                         <form class="reg__form" action="{{ url_for('register') }}" method="post">
-    {{ form.hidden_tag() }}
+                            {{ form.hidden_tag() }}
                             <h3 class="title reg__form-title">Sign Up</h3>
                             <ul>
                                 <li>
@@ -59,6 +59,16 @@
                                 </li>
                                 <button class="reg__form-btn" type="submit">Enter</button>
                             </ul>
+                            <!-- Добавляем блок для вывода flash сообщений -->
+                            {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                <div class="flashes">
+                                    {% for category, message in messages %}
+                                        <div class="form-error">{{ message }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            {% endwith %}
                         </form>
                     </div>
                     <div class="reg__image" style="background-image: url('../static/css/images/user-bg.png');"></div>
