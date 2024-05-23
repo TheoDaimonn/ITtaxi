@@ -1,0 +1,13 @@
+{% extends "driver_base.html" %}
+
+{% block content %}
+    <h1>Привет, {{ current_user.first_name }}!</h1>
+    <div>
+        <a href="{{ url_for('show_orders') }}" class="btn btn-primary">Принять заказ</a>
+        <a href="{{ url_for('history_of_driver') }}" class="btn btn-secondary">История заказов</a>
+        <a href="{{ url_for('active_order') }}" class="btn btn-secondary">Активный заказ</a>
+    </div>
+    {% for order in orders %}
+    <div><p>Старт поездки: {{ order.place_start }} Финиш: {{ order.place_end }} Цена: {{order.price}} Имя заказчика: {{order.user.first_name}}</p></div>
+    {% endfor %}
+{% endblock %}

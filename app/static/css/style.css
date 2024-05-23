@@ -693,3 +693,8 @@ input:checked + .slider:before {
 .choise-btn {
     margin-bottom: 20px;
 }
+
+.order-header {
+    text-align: center;
+    margin: 20px 0;
+}

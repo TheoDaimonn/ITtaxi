@@ -159,50 +159,18 @@ def driver_login():
 @app.route('/driver_main')
 @login_required('driver')
 def driver_main():
-    user_orders = current_user.orders
-    return render_template('driver_main.html', title='Home', user_orders=user_orders)
-
-
-@app.route('/show_orders')
-@login_required('driver')
-def show_orders():
-    orders = Order.query.filter_by(driver_id=None).all()
-    return render_template('choose-order.html', orders=orders)
-
-
-@app.route('/take_order/<int:order_id>', methods=['POST'])
-@login_required('driver')
-def take_order(order_id):
-    order = Order.query.get_or_404(order_id)
-    if current_user.status == "active":
-        flash("You already have order", 'warning')
-        return redirect(url_for('show_orders'))
-    if order.driver_id is not None:
-        flash('This order has already been taken.', 'warning')
-        return redirect(url_for('show_orders'))
-    current_user.change_status()
-    order.driver_id = current_user.id
-    order.set_order_taked_time()
-    db.session.commit()
-    flash('Order taken successfully!', 'success')
-    return redirect(url_for('show_orders'))
+    active_order = Order.query.filter_by(driver_id=current_user.id, order_finished=None).first()
+    available_orders = []
+    if not active_order:
+        available_orders = Order.query.filter_by(driver_id=None).all()
+    return render_template('driver_main.html', active_order=active_order, available_orders=available_orders)
 
 
 @app.route('/history_of_driver')
 @login_required('driver')
 def history_of_driver():
-    user_orders = current_user.orders
+    user_orders = Order.query.filter(Order.driver_id == current_user.id, Order.order_finished.isnot(None)).all()
     return render_template('history_of_driver.html', title='History', orders=user_orders)
-
-
-@app.route('/active_order')
-@login_required('driver')
-def active_order():
-    order = current_user.get_last_order()
-    status = current_user.status
-    if status == 'inactive':
-        return redirect(url_for('driver_main'))
-    return render_template('active_order.html', title='Active Order', active_order=order)
 
 
 @app.route('/complete_order/<int:order_id>', methods=['POST'])
@@ -211,12 +179,15 @@ def complete_order(order_id):
     order = Order.query.get_or_404(order_id)
     if order.driver_id != current_user.id:
         flash('You cannot complete this order.', 'danger')
-        return redirect(url_for('active_order'))
+        return redirect(url_for('driver_main'))
+    
     order.set_order_finished_time()
-    current_user.change_status()
+    current_user.status = 'inactive'
     db.session.commit()
-    flash('Order comleted.', 'success')
-    return redirect(url_for('active_order'))
+    
+    flash('Order completed.', 'success')
+    return redirect(url_for('driver_main'))
+
 
 
 @app.route('/history_of_user_orders')
@@ -287,7 +258,6 @@ def profile():
 
 
 @app.route('/update_profile', methods=['POST'])
-@login_required('user')
 def update_profile():
     form = UpdateProfileForm()
     if form.validate_on_submit():
@@ -295,7 +265,10 @@ def update_profile():
         current_user.last_name = form.last_name.data
         db.session.commit()
         flash('Profile updated successfully.', 'success')
-    return redirect(url_for('profile'))
+    if current_user.role == 'user':
+        return redirect(url_for('profile'))
+    else:
+        return redirect(url_for('driver_profile'))
 
 @app.route('/change_password', methods=['POST'])
 def change_password():
@@ -314,7 +287,7 @@ def change_password():
         return redirect(url_for('profile'))
     else:
         return redirect(url_for('driver_profile'))
-        
+
 
 @app.route('/cancel_order/<int:order_id>', methods=['POST'])
 @login_required('user')
@@ -363,3 +336,27 @@ def driver_profile():
     update_form.middle_name.data = current_user.middle_name
 
     return render_template('driver_profile.html', user=current_user, trip_count=trip_count, update_form=update_form, change_password_form=change_password_form)
+
+
+@app.route('/take_order/<int:order_id>', methods=['POST'])
+@login_required('driver')
+def take_order(order_id):
+    order = Order.query.get_or_404(order_id)
+    
+    # Проверка, не занят ли водитель уже заказом
+    active_order = Order.query.filter_by(driver_id=current_user.id, order_finished=None).first()
+    if active_order:
+        flash("You already have an active order.", 'warning')
+        return redirect(url_for('driver_main'))
+    
+    if order.driver_id is not None:
+        flash('This order has already been taken.', 'warning')
+        return redirect(url_for('driver_main'))
+    
+    current_user.status = 'active'
+    order.driver_id = current_user.id
+    order.set_order_taked_time()
+    db.session.commit()
+    
+    flash('Order taken successfully!', 'success')
+    return redirect(url_for('driver_main'))
