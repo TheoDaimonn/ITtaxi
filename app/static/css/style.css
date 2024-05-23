@@ -21,7 +21,7 @@ body {
 }
 
 body.index-page {
-    background-color: #212529;
+    background: none;
     color: #fff;
     font-family: "Inter", sans-serif;
 }
@@ -328,6 +328,10 @@ body.history-page .content__title {
     margin-left: 100px;
 }
 
+.index {
+    background: none;
+}
+
 .content__container {
     margin-top: 60px;
 }
@@ -519,6 +523,7 @@ input:checked + .slider:before {
 .alert {
     padding: 10px;
     margin-bottom: 10px;
+    margin-top: 10px;
     border: 1px solid transparent;
     border-radius: 4px;
     display: inline-block;
@@ -534,27 +539,22 @@ input:checked + .slider:before {
 
 }
 
-.alert.danger {
+.alert.danger,
+.alert.warning {
     color: #721c24;
     background-color: #f8d7da;
     border-color: #f5c6cb;
 }
 
 .form-error {
+    border: 1px solid transparent;
+    border-radius: 4px;    
+    width: 320px;
     color: red;
     font-size: 14px;
     margin-top: 10px;
-    display: block;
+    display: inline-block;
 }
-
-
-.alert.warning {
-    color: #856404;
-    background-color: #fff3cd;
-    border-color: #ffeeba;
-}
-
-
 
 /* Добавленные стили для index.html */
 .greeting {

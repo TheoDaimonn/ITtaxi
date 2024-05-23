@@ -42,7 +42,9 @@
                                 <li>
                                     {{ form.email(placeholder="Email", required=True) }}<br>
                                     {% for error in form.email.errors %}
-                                        <span style="color: red;">[{{ error }}]</span>
+                                        <div style="flashes">
+                                            <div class="alert danger">{{ error }}</div>
+                                        </div>
                                     {% endfor %}
                                 </li>
                                 <li>
