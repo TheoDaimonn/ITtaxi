@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Профиль Водителя</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="profile-page">
+        <div class="container">
+            <div class="content">
+                <div class="sidebar">
+                    <div class="sidebar-item">
+                        <a href="{{ url_for('choice') }}">
+                            <img class="logo" src="../static/css/images/logo.svg" alt="logo">
+                        </a>
+                    </div>
+                    <div class="sidebar-item">
+                        <a href="{{ url_for('driver_main') }}">
+                            <img class="home-img" src="../static/css/images/home.svg" alt="home">
+                        </a>
+                        <a href="{{ url_for('driver_profile') }}">
+                            <img class="profile-img" src="../static/css/images/profile.svg" alt="profile">
+                        </a>
+                        <a href="{{ url_for('history_of_driver') }}">
+                            <img class="history-img" src="../static/css/images/history.svg" alt="history">
+                        </a>
+                    </div>
+                </div>
+                <div class="content__main">
+                    <div class="content__container">
+                        <h2 class="content__title">Driver Profile</h2>
+                        <div class="profile__info">
+                            <p>First Name: {{ user.first_name }}</p>
+                            <p>Last Name: {{ user.last_name }}</p>
+                            <p>Middle Name: {{ user.middle_name }}</p>
+                            <p>Email: {{ user.email }}</p>
+                            <p>Number of Trips: {{ trip_count }}</p>
+
+                            <h2>Update Information</h2>
+                            <form class="profile__form" method="POST" action="{{ url_for('driver_profile') }}">
+                                {{ update_form.hidden_tag() }}
+                                <ul>
+                                    <li>
+                                        {{ update_form.first_name(type="text", placeholder="First Name", required=True) }}<br>
+                                        {% for error in update_form.first_name.errors %}
+                                            <span style="color: red;">[{{ error }}]</span>
+                                        {% endfor %}
+                                    </li>
+                                    <li>
+                                        {{ update_form.last_name(type="text", placeholder="Last Name", required=True) }}<br>
+                                        {% for error in update_form.last_name.errors %}
+                                            <span style="color: red;">[{{ error }}]</span>
+                                        {% endfor %}
+                                    </li>
+                                    <li>
+                                        {{ update_form.middle_name(type="text", placeholder="Middle Name") }}<br>
+                                        {% for error in update_form.middle_name.errors %}
+                                            <span style="color: red;">[{{ error }}]</span>
+                                        {% endfor %}
+                                    </li>
+                                    <button class="profile__info-btn" type="submit">Update Profile</button>
+                                </ul>
+                            </form>
+
+                            <h2>Change Password</h2>
+                            <form class="profile__form" method="POST" action="{{ url_for('change_password') }}">
+                                {{ change_password_form.hidden_tag() }}
+                                <ul>
+                                    <li>
+                                        {{ change_password_form.old_password(type="password", placeholder="Old Password", required=True) }}<br>
+                                        {% for error in change_password_form.old_password.errors %}
+                                            <span style="color: red;">[{{ error }}]</span>
+                                        {% endfor %}
+                                    </li>
+                                    <li>
+                                        {{ change_password_form.new_password(type="password", placeholder="New Password", required=True) }}<br>
+                                        {% for error in change_password_form.new_password.errors %}
+                                            <span style="color: red;">[{{ error }}]</span>
+                                        {% endfor %}
+                                    </li>
+                                    <li>
+                                        {{ change_password_form.new_password2(type="password", placeholder="Repeat New Password", required=True) }}<br>
+                                        {% for error in change_password_form.new_password2.errors %}
+                                            <span style="color: red;">[{{ error }}]</span>
+                                        {% endfor %}
+                                    </li>
+                                    <button class="profile__info-btn" type="submit">Change Password</button>
+                                </ul>
+                            </form>
+
+                            <form method="POST" action="{{ url_for('logout') }}">
+                                <button class="profile__info-btn" type="submit">Logout</button>
+                            </form>
+                        </div>
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            <div class="flashes">
+                            {% for category, message in messages %}
+                                <div class="alert {{ category }}">{{ message }}</div>
+                            {% endfor %}
+                            </div>
+                        {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

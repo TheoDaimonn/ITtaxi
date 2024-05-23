@@ -298,18 +298,23 @@ def update_profile():
     return redirect(url_for('profile'))
 
 @app.route('/change_password', methods=['POST'])
-@login_required('user')
 def change_password():
     form = ChangePasswordForm()
     if form.validate_on_submit():
         if not current_user.check_password(form.old_password.data):
             flash('Incorrect old password.', 'danger')
-            return redirect(url_for('profile'))
+            if current_user.role == 'user':
+                return redirect(url_for('profile'))
+            else:
+                return redirect(url_for('driver_profile'))
         current_user.set_password(form.new_password.data)
         db.session.commit()
         flash('Password changed successfully.', 'success')
-    return redirect(url_for('profile'))
-
+    if current_user.role == 'user':
+        return redirect(url_for('profile'))
+    else:
+        return redirect(url_for('driver_profile'))
+        
 
 @app.route('/cancel_order/<int:order_id>', methods=['POST'])
 @login_required('user')
@@ -326,3 +331,35 @@ def cancel_order(order_id):
     db.session.commit()
     flash('Order canceled successfully.', 'success')
     return redirect(url_for('index'))
+
+
+@app.route('/driver_profile', methods=['GET', 'POST'])
+@login_required('driver')
+def driver_profile():
+    update_form = UpdateProfileForm()
+    change_password_form = ChangePasswordForm()
+
+    if update_form.validate_on_submit() and update_form.submit.data:
+        current_user.first_name = update_form.first_name.data
+        current_user.last_name = update_form.last_name.data
+        current_user.middle_name = update_form.middle_name.data
+        db.session.commit()
+        flash('Profile updated successfully', 'success')
+        return redirect(url_for('driver_profile'))
+
+    if change_password_form.validate_on_submit() and change_password_form.submit.data:
+        if not current_user.check_password(change_password_form.old_password.data):
+            flash('Incorrect old password', 'danger')
+            return render_template('driver_profile.html', user=current_user, trip_count=Order.query.filter(Order.driver_id == current_user.id, Order.order_finished.isnot(None)).count(), update_form=update_form, change_password_form=change_password_form)
+        else:
+            current_user.set_password(change_password_form.new_password.data)
+            db.session.commit()
+            flash('Password changed successfully', 'success')
+            return redirect(url_for('driver_profile'))
+
+    trip_count = Order.query.filter(Order.driver_id == current_user.id, Order.order_finished.isnot(None)).count()
+    update_form.first_name.data = current_user.first_name
+    update_form.last_name.data = current_user.last_name
+    update_form.middle_name.data = current_user.middle_name
+
+    return render_template('driver_profile.html', user=current_user, trip_count=trip_count, update_form=update_form, change_password_form=change_password_form)
