@@ -23,13 +23,13 @@ body {
 body.index-page {
     background: none;
     color: #fff;
-    font-family: "Inter", sans-serif;
+    font-family: 'Ubuntu', sans-serif;
 }
 
 body.order-page {
     background-color: transparent;
     color: #fff;
-    font-family: "Inter", sans-serif;
+    font-family: 'Ubuntu', sans-serif;
 }
 
 body.order-page .content__main {
@@ -90,7 +90,7 @@ body:not(.history-page) {
     background-size: 105% 105%;
     background-attachment: fixed;
     color: #fff;
-    font-family: "Inter", sans-serif;
+    font-family: 'Ubuntu', sans-serif;
 }
 
 body.history-page {
