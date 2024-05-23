@@ -88,6 +88,7 @@ body:not(.history-page) {
     background-position: center;
     background-repeat: no-repeat;
     background-size: 105% 105%;
+    background-attachment: fixed;
     color: #fff;
     font-family: "Inter", sans-serif;
 }
@@ -240,7 +241,7 @@ body.history-page .content__title {
 
 .reg__title {
     margin-top: 30px;
-    margin-left: 15px;
+    margin-left: 30px;
     font-size: 30px;
     font-weight: 800;
     text-align: center;
@@ -546,16 +547,6 @@ input:checked + .slider:before {
     border-color: #f5c6cb;
 }
 
-.form-error {
-    border: 1px solid transparent;
-    border-radius: 4px;    
-    width: 320px;
-    color: red;
-    font-size: 14px;
-    margin-top: 10px;
-    display: inline-block;
-}
-
 /* Добавленные стили для index.html */
 .greeting {
     margin: 20px 0;
@@ -570,6 +561,7 @@ input:checked + .slider:before {
 }
 
 .arrange-order-btn {
+    width: 320px;
     padding: 10px 20px;
     background-color: #fff;
     color: #191d1f;
@@ -577,6 +569,7 @@ input:checked + .slider:before {
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    text-align: center;
 }
 
 .arrange-order-btn:hover {

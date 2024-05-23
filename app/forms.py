@@ -63,6 +63,7 @@ class RateOrderForm(FlaskForm):
 class UpdateProfileForm(FlaskForm):
     first_name = StringField('First Name', validators=[DataRequired()])
     last_name = StringField('Last Name', validators=[DataRequired()])
+    middle_name = StringField('Middle Name')
     submit = SubmitField('Update Name')
 
 class ChangePasswordForm(FlaskForm):

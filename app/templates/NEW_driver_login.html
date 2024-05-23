@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,10 +9,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body>
     <main class="main">
         <div class="container main__container">
-
             <div class="inner">
                 <form class="main__form" method="post" novalidate>
                     <h1 class="title main__title">Log in to IT-Taxi as Driver</h1>
@@ -22,13 +21,13 @@
                         <li>
                             {{ form.email(class_='email', placeholder='Email', required=True) }}<br>
                             {% for error in form.email.errors %}
-                            <span style="color: red;">[{{ error }}]</span>
+                                <span style="color: red;">[{{ error }}]</span>
                             {% endfor %}
                         </li>
                         <li>
                             {{ form.password(type='password', class_='password', placeholder='Password', required=True) }}<br>
                             {% for error in form.password.errors %}
-                            <span style="color: red;">[{{ error }}]</span>
+                                <span style="color: red;">[{{ error }}]</span>
                             {% endfor %}
                         </li>
                         <li>
@@ -48,10 +47,18 @@
                             <a href="{{ url_for('login') }}">Click to User Login!</a>
                         </div>
                     </div>
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flashes">
+                        {% for category, message in messages %}
+                            <div class="alert {{ category }}">{{ message }}</div>
+                        {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% endwith %}
                 </form>
             </div>
         </div>
     </main>
 </body>
-
 </html>

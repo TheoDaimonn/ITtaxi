@@ -69,8 +69,10 @@ def register():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash('Thanks for registering!')
+        flash('Thanks for registering!', 'success')
         return redirect(url_for('login'))
+    elif form.errors:
+        flash('Please fill out all fields correctly.', 'danger')
     return render_template('register.html', title='Register', form=form)
 
 
@@ -79,13 +81,23 @@ def register():
 def order():
     form = OrderForm()
     if form.validate_on_submit():
+        # Проверка количества активных заказов пользователя
+        active_orders_count = Order.query.filter(
+            Order.user_id == current_user.id,
+            Order.order_taked.is_(None)
+        ).count()
+
+        if active_orders_count >= 5:
+            flash('You have reached the limit of active orders.', 'danger')
+            return redirect(url_for('order'))
+
         # Проверка наличия свободных водителей
         available_driver = Driver.query.filter_by(status='inactive').first()
         if available_driver is None:
-            flash('No available drivers. Please wait.')
+            flash('No available drivers. Please wait.', 'danger')
             return redirect(url_for('order'))
 
-        # Создание заказа и привязка к водителю
+        # Создание заказа
         new_order = Order(
             place_start=form.place_start.data,
             place_end=form.place_end.data,
@@ -96,9 +108,10 @@ def order():
         db.session.add(new_order)
         db.session.commit()
         
-        flash('Your order has been created successfully!', 'succes')
+        flash('Your order has been created successfully!', 'success')
         return redirect(url_for('index'))
     return render_template('new-order.html', title='New Order', form=form)
+
 
 
 @app.route('/driver_register', methods=['GET', 'POST'])
@@ -114,8 +127,10 @@ def driver_register():
         driver.id = new_id
         db.session.add(driver)
         db.session.commit()
-        flash('Thanks for registering!')
+        flash('Thanks for registering!', 'success')
         return redirect(url_for('driver_login'))
+    elif form.errors:
+        flash('Please fill out all fields correctly.', 'danger')
     return render_template('driver_register.html', title='Register', form=form)
 
 
@@ -130,7 +145,7 @@ def driver_login():
     if form.validate_on_submit():
         driver = Driver.query.filter_by(email=form.email.data).first()
         if driver is None or not driver.check_password(form.password.data):
-            flash('Invalid email or password!')
+            flash('Invalid email or password!', 'danger')
             return redirect(url_for('driver_login'))
         logout_user()
         login_user(driver, remember=form.remember_me.data)
@@ -144,7 +159,7 @@ def driver_login():
 @app.route('/driver_main')
 @login_required('driver')
 def driver_main():
-    user_orders = current_user.orders.all()
+    user_orders = current_user.orders
     return render_template('driver_main.html', title='Home', user_orders=user_orders)
 
 
@@ -176,7 +191,7 @@ def take_order(order_id):
 @app.route('/history_of_driver')
 @login_required('driver')
 def history_of_driver():
-    user_orders = current_user.orders.all()
+    user_orders = current_user.orders
     return render_template('history_of_driver.html', title='History', orders=user_orders)
 
 
@@ -195,12 +210,12 @@ def active_order():
 def complete_order(order_id):
     order = Order.query.get_or_404(order_id)
     if order.driver_id != current_user.id:
-        flash('Вы не можете завершить этот заказ.', 'danger')
+        flash('You cannot complete this order.', 'danger')
         return redirect(url_for('active_order'))
     order.set_order_finished_time()
     current_user.change_status()
     db.session.commit()
-    flash('Заказ завершен.', 'success')
+    flash('Order comleted.', 'success')
     return redirect(url_for('active_order'))
 
 
@@ -250,18 +265,26 @@ def profile():
     if change_password_form.validate_on_submit() and change_password_form.submit.data:
         if not current_user.check_password(change_password_form.old_password.data):
             flash('Incorrect old password', 'danger')
-            return render_template('profile.html', user=current_user, trip_count=Order.query.filter_by(user_id=current_user.id).count(), update_form=update_form, change_password_form=change_password_form)
+            return render_template('profile.html', user=current_user, trip_count=Order.query.filter(Order.user_id == current_user.id, Order.order_finished.isnot(None)).count(), update_form=update_form, change_password_form=change_password_form)
         else:
             current_user.set_password(change_password_form.new_password.data)
             db.session.commit()
             flash('Password changed successfully', 'success')
             return redirect(url_for('profile'))
 
-    trip_count = Order.query.filter_by(user_id=current_user.id).count()
+    trip_count = Order.query.filter(Order.user_id == current_user.id, Order.order_finished.isnot(None)).count()
     update_form.first_name.data = current_user.first_name
     update_form.last_name.data = current_user.last_name
 
     return render_template('profile.html', user=current_user, trip_count=trip_count, update_form=update_form, change_password_form=change_password_form)
+
+
+    trip_count = Order.query.filter_by(user_id=current_user.id).filter(Order.order_finished.isnot(None)).count()
+    update_form.first_name.data = current_user.first_name
+    update_form.last_name.data = current_user.last_name
+
+    return render_template('profile.html', user=current_user, trip_count=trip_count, update_form=update_form, change_password_form=change_password_form)
+
 
 @app.route('/update_profile', methods=['POST'])
 @login_required('user')
@@ -286,3 +309,20 @@ def change_password():
         db.session.commit()
         flash('Password changed successfully.', 'success')
     return redirect(url_for('profile'))
+
+
+@app.route('/cancel_order/<int:order_id>', methods=['POST'])
+@login_required('user')
+def cancel_order(order_id):
+    order = Order.query.get_or_404(order_id)
+    if order.user_id != current_user.id:
+        flash('You do not have permission to cancel this order.', 'danger')
+        return redirect(url_for('index'))
+    if order.order_taked:
+        flash('This order has already been taken and cannot be canceled.', 'danger')
+        return redirect(url_for('index'))
+    
+    db.session.delete(order)
+    db.session.commit()
+    flash('Order canceled successfully.', 'success')
+    return redirect(url_for('index'))

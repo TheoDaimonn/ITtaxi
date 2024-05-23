@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -29,7 +28,6 @@
                             <h3 class="title reg__form-title">Sign Up</h3>
                             {{ form.hidden_tag() }}
                             <ul>
-                                <!-- Пример одного поля -->
                                 <li>
                                     {{ form.first_name(placeholder="First Name", required=True) }}<br>
                                     {% for error in form.first_name.errors %}
@@ -51,7 +49,9 @@
                                 <li>
                                     {{ form.email(placeholder="Email", required=True) }}<br>
                                     {% for error in form.email.errors %}
-                                        <span style="color: red;">{{ error }}</span><br>
+                                        <div style="flashes">
+                                            <div class="alert danger">{{ error }}</div>
+                                        </div>
                                     {% endfor %}
                                 </li>
                                 <li>
@@ -78,8 +78,18 @@
                                         <span style="color: red;">{{ error }}</span><br>
                                     {% endfor %}
                                 </li>
-                                {{ form.submit(class_="reg__form-btn") }}
+                                <button class="reg__form-btn" type="submit">Enter</button>
                             </ul>
+                            <!-- Добавляем блок для вывода flash сообщений -->
+                            {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                <div class="flashes">
+                                    {% for category, message in messages %}
+                                        <div class="alert {{ category }}">{{ message }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            {% endwith %}
                         </form>
                     </div>
                     <div class="reg__image" style="background-image: url('{{ url_for('static', filename='css/images/driver-bg.png') }}');"></div>
@@ -90,5 +100,3 @@
 </body>
 
 </html>
-
-

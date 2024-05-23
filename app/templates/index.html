@@ -38,6 +38,15 @@
                             <a href="{{ url_for('order') }}" class="arrange-order-btn">Arrange an Order</a>
                         </div>
                     </div>
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flashes">
+                            {% for category, message in messages %}
+                                <div class="alert {{ category }}">{{ message }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% endwith %}
                     <div class="orders__container">
                         <div class="available-order__container">
                             {% for order in orders %}
@@ -50,6 +59,10 @@
                                         <div class="orders-item-text"><strong>Taken time:</strong> {{ order.order_taked }}</div>
                                         <div class="orders-item-text"><strong>Driver:</strong> {{ order.driver.first_name }} {{ order.driver.last_name }}</div>
                                         <div class="orders-item-text"><strong>Car model:</strong> {{ order.driver.car_model }}</div>
+                                    {% else %}
+                                        <form method="post" action="{{ url_for('cancel_order', order_id=order.id) }}">
+                                            <button type="submit" class="btn btn-danger">Cancel Order</button>
+                                        </form>
                                     {% endif %}
                                 </div>
                             {% endfor %}
