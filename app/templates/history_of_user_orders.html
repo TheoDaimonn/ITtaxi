@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>История заказов</title>
+    <title>IT-Taxi - История поездок</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body class="history-page">
@@ -30,20 +30,30 @@
                 </div>
                 <div class="content__main">
                     <div class="content__container">
-                        <h1 class="content__title">История заказов</h1>
+                        <h1 class="content__title">History of trips</h1>
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            <div class="flashes">
+                                {% for category, message in messages %}
+                                    <div class="alert {{ category }}">{{ message }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        {% endwith %}                        
                         <div class="orders__table">
                             <table class="table">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>Место начала</th>
-                                        <th>Место окончания</th>
-                                        <th>Цена</th>
-                                        <th>Дата заказа</th>
-                                        <th>Дата окончания</th>
-                                        <th>Водитель</th>
-                                        <th>Модель машины</th>
-                                        <th>Оценка</th>
+                                        <th>Start</th>
+                                        <th>Finish</th>
+                                        <th>Price</th>
+                                        <th>Order placed</th>
+                                        <th>Trip finished</th>
+                                        <th>Trip duration</th>
+                                        <th>Driver</th>
+                                        <th>Car model</th>
+                                        <th>Rating</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -55,13 +65,21 @@
                                         <td>{{ order.price }}</td>
                                         <td>{{ order.order_time }}</td>
                                         <td>{{ order.order_finished }}</td>
+                                        <td>
+                                            {% if order.order_taked and order.order_finished %}
+                                                {% set duration = order.order_finished - order.order_taked %}
+                                                {{ duration.total_seconds() // 3600 }}h {{ (duration.total_seconds() % 3600) // 60 }}m
+                                            {% else %}
+                                                N/A
+                                            {% endif %}
+                                        </td>
                                         <td>{{ order.driver.first_name }} {{ order.driver.last_name }}</td>
                                         <td>{{ order.driver.car_model }}</td>
                                         <td>
                                             {% if order.score > 0 %}
                                                 {{ order.score }}
                                             {% else %}
-                                                <a href="{{ url_for('rate_order', order_id=order.id) }}" class="btn btn-secondary">Оценить заказ</a>
+                                                <a href="{{ url_for('rate_order', order_id=order.id) }}" class="btn btn-secondary">Rate</a>
                                             {% endif %}
                                         </td>
                                     </tr>

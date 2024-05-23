@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Оценить заказ</title>
+    <title>IT-Taxi - Оценка поездки</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
-    <div class="list-order-page">
+<body class="order-page">
+    <div class="new-order-page">
         <div class="container">
             <div class="content">
                 <div class="sidebar">
@@ -20,24 +23,40 @@
                         <a href="{{ url_for('index') }}">
                             <img class="home-img" src="../static/css/images/home.svg" alt="home">
                         </a>
-                        <img class="profile-img" src="../static/css/images/profile.svg" alt="profile">
+                        <a href="{{ url_for('profile') }}">
+                            <img class="profile-img" src="../static/css/images/profile.svg" alt="profile">
+                        </a>
                         <a href="{{ url_for('history_of_user_orders') }}">
                             <img class="history-img" src="../static/css/images/history.svg" alt="history">
                         </a>
                     </div>
                 </div>
                 <div class="content__main">
-                    <div class="container main__container">
-                        <h1>Оценить заказ</h1>
-                        <form method="POST" action="">
+                    <div class="content__container">
+                        <h2 class="content__title">Rate Order</h2>
+                        
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            <div class="flashes">
+                                {% for category, message in messages %}
+                                    <div class="alert {{ category }}">{{ message }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        {% endwith %}
+
+                        <form class="rate-order__info profile__info" method="POST" action="">
                             {{ form.hidden_tag() }}
-                            <div class="form-group">
-                                {{ form.rating.label }}<br>
-                                {{ form.rating(size=5, class="form-control") }}
-                            </div>
-                            <div class="form-group">
-                                {{ form.submit(class="btn btn-primary") }}
-                            </div>
+                            <ul>
+                                <li>
+                                    {{ form.rating.label }}<br>
+                                    {{ form.rating(size=5, class="form-control") }}<br>
+                                    {% for error in form.rating.errors %}
+                                        <span style="color: red;">[{{ error }}]</span>
+                                    {% endfor %}
+                                </li>
+                                <button class="profile__info-btn" type="submit">Submit Rating</button>
+                            </ul>
                         </form>
                     </div>
                 </div>

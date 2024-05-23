@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Профиль Водителя</title>
+    <title>IT-Taxi - Профиль Водителя</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
@@ -37,6 +37,11 @@
                             <p>Middle Name: {{ user.middle_name }}</p>
                             <p>Email: {{ user.email }}</p>
                             <p>Number of Trips: {{ trip_count }}</p>
+                            <p>Car Model: {{ user.car_model }}</p>
+                            <p>License Plate: {{ user.license_plate }}</p>
+                            {% if user.rating > 0 %}
+                                <p>Rating: {{ user.rating }}</p>
+                            {% endif %}
 
                             <h2>Update Information</h2>
                             <form class="profile__form" method="POST" action="{{ url_for('driver_profile') }}">

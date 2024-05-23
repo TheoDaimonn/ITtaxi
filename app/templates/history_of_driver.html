@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>История заказов</title>
+    <title>IT-Taxi - История заказов</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body class="history-page">
@@ -30,20 +30,19 @@
                 </div>
                 <div class="content__main">
                     <div class="content__container">
-                        <h1 class="content__title">История заказов</h1>
+                        <h1 class="content__title">History of trips</h1>
                         <div class="orders__table">
                             <table class="table">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>Место начала</th>
-                                        <th>Место окончания</th>
-                                        <th>Цена</th>
-                                        <th>Дата заказа</th>
-                                        <th>Дата взятия</th>
-                                        <th>Дата окончания</th>
-                                        <th>Время поездки</th>
-                                        <th>Пользователь</th>
+                                        <th>Start</th>
+                                        <th>Finish</th>
+                                        <th>Price</th>
+                                        <th>Order placed</th>
+                                        <th>Trip finished</th>
+                                        <th>Trip duration</th>
+                                        <th>Customer</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -54,7 +53,6 @@
                                         <td>{{ order.place_end }}</td>
                                         <td>{{ order.price }}</td>
                                         <td>{{ order.order_time }}</td>
-                                        <td>{{ order.order_taked }}</td>
                                         <td>{{ order.order_finished }}</td>
                                         <td>
                                             {% if order.order_finished and order.order_taked %}
