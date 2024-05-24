@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, NumberRange
-from app.models import User, Driver
+from app.models import User, Driver, Order
 
 
 class LoginForm(FlaskForm):
@@ -46,7 +46,7 @@ class DriverRegistrationForm(FlaskForm):
     submit = SubmitField("Register")
 
     def validate_email(self, email):
-        driver = Driver.query.filter_by(email=email.data).first() #Обращаемся в таблицу водителей
+        driver = Driver.query.filter_by(email=email.data).first()
         if driver is not None:
             raise ValidationError("This email is currently used")
 
@@ -65,6 +65,7 @@ class UpdateProfileForm(FlaskForm):
     last_name = StringField('Last Name', validators=[DataRequired()])
     middle_name = StringField('Middle Name')
     submit = SubmitField('Update Name')
+
 
 class ChangePasswordForm(FlaskForm):
     old_password = PasswordField('Old Password', validators=[DataRequired()])
