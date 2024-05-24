@@ -2,7 +2,7 @@ from urllib import request
 
 from flask import render_template, flash, redirect, url_for, request
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, OrderForm, DriverRegistrationForm, TakeOrderForm, RateOrderForm
+from app.forms import LoginForm, RegistrationForm, OrderForm, DriverRegistrationForm, TakeOrderForm, RateOrderForm, UpdateProfileForm, ChangePasswordForm
 from flask_login import login_user, logout_user, current_user
 from app.models import User, Order, Driver
 from werkzeug.urls import url_parse
@@ -19,12 +19,13 @@ def choice():
 
 
 @app.route('/index')
-@app.route('/profile')
 @login_required('user')
 def index():
-
-    user_orders = current_user.orders.all()
-    return render_template('index.html', title='Home', orders=user_orders)
+    orders = Order.query.filter(
+        Order.user_id == current_user.id,
+        db.or_(Order.order_taked.is_(None), Order.order_finished.is_(None))
+    ).all()
+    return render_template('index.html', orders=orders)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -39,7 +40,7 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user is None or not user.check_password(form.password.data):
-            flash('Invalid email or password!')
+            flash('Invalid email or password!', 'danger')  
             return redirect(url_for('login'))
         logout_user()
         login_user(user, remember=form.remember_me.data)
@@ -47,12 +48,14 @@ def login():
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('index')
         return redirect(next_page)
-    return render_template('login.html',  title='Sign In', form=form)
+    return render_template('login.html', title='Sign In', form=form)
 
 
-@app.route('/logout')
+
+@app.route('/logout', methods=['POST'])
 def logout():
     logout_user()
+    flash('You have been logged out.', 'success')
     return redirect(url_for('choice'))
 
 
@@ -66,8 +69,10 @@ def register():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash('Thanks for registering!')
+        flash('Thanks for registering!', 'success')
         return redirect(url_for('login'))
+    elif form.errors:
+        flash('Please fill out all fields correctly.', 'danger')
     return render_template('register.html', title='Register', form=form)
 
 
@@ -76,20 +81,43 @@ def register():
 def order():
     form = OrderForm()
     if form.validate_on_submit():
-        order = Order(place_start=form.place_start.data, place_end=form.place_end.data, user_id=current_user.id)
-        order.set_order_time()
-        order.set_price(form.place_start.data, form.place_end.data)
-        db.session.add(order)
+        # Проверка количества активных заказов пользователя
+        active_orders_count = Order.query.filter(
+            Order.user_id == current_user.id,
+            Order.order_taked.is_(None)
+        ).count()
+
+        if active_orders_count >= 5:
+            flash('You have reached the limit of active orders.', 'danger')
+            return redirect(url_for('order'))
+
+        # Проверка наличия свободных водителей
+        available_driver = Driver.query.filter_by(status='inactive').first()
+        if available_driver is None:
+            flash('No available drivers. Please wait.', 'danger')
+            return redirect(url_for('order'))
+
+        # Создание заказа
+        new_order = Order(
+            place_start=form.place_start.data,
+            place_end=form.place_end.data,
+            user_id=current_user.id
+        )
+        new_order.set_price(form.place_start.data, form.place_end.data)
+        new_order.set_order_time()
+        db.session.add(new_order)
         db.session.commit()
-        flash('Thanks for your order, Taxi is on the way!')
+        
+        flash('Your order has been created successfully!', 'success')
         return redirect(url_for('index'))
-    return render_template('new-order.html', title='Order', form=form)
+    return render_template('new-order.html', title='New Order', form=form)
+
 
 
 @app.route('/driver_register', methods=['GET', 'POST'])
 def driver_register():
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('driver_main'))
     form = DriverRegistrationForm()
     if form.validate_on_submit():
         driver = Driver(first_name=form.first_name.data, last_name=form.last_name.data, middle_name=form.middle_name.data, car_model=form.car_model.data, license_plate=form.license_plate.data, email=form.email.data)
@@ -99,8 +127,10 @@ def driver_register():
         driver.id = new_id
         db.session.add(driver)
         db.session.commit()
-        flash('Thanks for registering!')
-        return redirect(url_for('login'))
+        flash('Thanks for registering!', 'success')
+        return redirect(url_for('driver_login'))
+    elif form.errors:
+        flash('Please fill out all fields correctly.', 'danger')
     return render_template('driver_register.html', title='Register', form=form)
 
 
@@ -115,7 +145,7 @@ def driver_login():
     if form.validate_on_submit():
         driver = Driver.query.filter_by(email=form.email.data).first()
         if driver is None or not driver.check_password(form.password.data):
-            flash('Invalid email or password!')
+            flash('Invalid email or password!', 'danger')
             return redirect(url_for('driver_login'))
         logout_user()
         login_user(driver, remember=form.remember_me.data)
@@ -129,50 +159,18 @@ def driver_login():
 @app.route('/driver_main')
 @login_required('driver')
 def driver_main():
-    user_orders = current_user.orders.all()
-    return render_template('driver_main.html', title='Home', user_orders=user_orders)
-
-
-@app.route('/show_orders')
-@login_required('driver')
-def show_orders():
-    orders = Order.query.filter_by(driver_id=None).all()
-    return render_template('choose-order.html', orders=orders)
-
-
-@app.route('/take_order/<int:order_id>', methods=['POST'])
-@login_required('driver')
-def take_order(order_id):
-    order = Order.query.get_or_404(order_id)
-    if current_user.status == "active":
-        flash("You already have order", 'warning')
-        return redirect(url_for('show_orders'))
-    if order.driver_id is not None:
-        flash('This order has already been taken.', 'warning')
-        return redirect(url_for('show_orders'))
-    current_user.change_status()
-    order.driver_id = current_user.id
-    order.set_order_taked_time()
-    db.session.commit()
-    flash('Order taken successfully!', 'success')
-    return redirect(url_for('show_orders'))
+    active_order = Order.query.filter_by(driver_id=current_user.id, order_finished=None).first()
+    available_orders = []
+    if not active_order:
+        available_orders = Order.query.filter_by(driver_id=None).all()
+    return render_template('driver_main.html', active_order=active_order, available_orders=available_orders)
 
 
 @app.route('/history_of_driver')
 @login_required('driver')
 def history_of_driver():
-    user_orders = current_user.orders.all()
+    user_orders = Order.query.filter(Order.driver_id == current_user.id, Order.order_finished.isnot(None)).all()
     return render_template('history_of_driver.html', title='History', orders=user_orders)
-
-
-@app.route('/active_order')
-@login_required('driver')
-def active_order():
-    order = current_user.get_last_order()
-    status = current_user.status
-    if status == 'inactive':
-        return redirect(url_for('driver_main'))
-    return render_template('active_order.html', title='Active Order', active_order=order)
 
 
 @app.route('/complete_order/<int:order_id>', methods=['POST'])
@@ -180,19 +178,22 @@ def active_order():
 def complete_order(order_id):
     order = Order.query.get_or_404(order_id)
     if order.driver_id != current_user.id:
-        flash('Вы не можете завершить этот заказ.', 'danger')
-        return redirect(url_for('active_order'))
-    order.order_finished = datetime.utcnow()
-    current_user.change_status()
+        flash('You cannot complete this order.', 'danger')
+        return redirect(url_for('driver_main'))
+    
+    order.set_order_finished_time()
+    current_user.status = 'inactive'
     db.session.commit()
-    flash('Заказ завершен.', 'success')
-    return redirect(url_for('active_order'))
+    
+    flash('Order completed.', 'success')
+    return redirect(url_for('driver_main'))
+
 
 
 @app.route('/history_of_user_orders')
 @login_required('user')
 def history_of_user_orders():
-    orders = Order.query.filter_by(user_id=current_user.id).all()
+    orders = Order.query.filter_by(user_id=current_user.id).filter(Order.order_finished.isnot(None)).all()
     return render_template('history_of_user_orders.html', title='История заказов', orders=orders)
 
 
@@ -209,8 +210,7 @@ def rate_order(order_id):
     if form.validate_on_submit():
         driver = Driver.query.get(order.driver_id)
         if driver:
-            driver.rating = (driver.rating * driver.number_of_ratings + form.rating.data) / (driver.number_of_ratings + 1)
-            driver.number_of_ratings += 1
+            driver.update_rating(form.rating.data)
             order.score = form.rating.data
             db.session.commit()
             flash('Order has been rated.', 'success')
@@ -218,3 +218,145 @@ def rate_order(order_id):
             flash('Driver not found for this order.', 'danger')
         return redirect(url_for('history_of_user_orders'))
     return render_template('rate_order.html', title='Rate Order', form=form, order=order)
+
+
+@app.route('/profile', methods=['GET', 'POST'])
+@login_required('user')
+def profile():
+    update_form = UpdateProfileForm()
+    change_password_form = ChangePasswordForm()
+
+    if update_form.validate_on_submit() and update_form.submit.data:
+        current_user.first_name = update_form.first_name.data
+        current_user.last_name = update_form.last_name.data
+        db.session.commit()
+        flash('Name updated successfully', 'success')
+        return redirect(url_for('profile'))
+
+    if change_password_form.validate_on_submit() and change_password_form.submit.data:
+        if not current_user.check_password(change_password_form.old_password.data):
+            flash('Incorrect old password', 'danger')
+            return render_template('profile.html', user=current_user, trip_count=Order.query.filter(Order.user_id == current_user.id, Order.order_finished.isnot(None)).count(), update_form=update_form, change_password_form=change_password_form)
+        else:
+            current_user.set_password(change_password_form.new_password.data)
+            db.session.commit()
+            flash('Password changed successfully', 'success')
+            return redirect(url_for('profile'))
+
+    trip_count = Order.query.filter(Order.user_id == current_user.id, Order.order_finished.isnot(None)).count()
+    update_form.first_name.data = current_user.first_name
+    update_form.last_name.data = current_user.last_name
+
+    return render_template('profile.html', user=current_user, trip_count=trip_count, update_form=update_form, change_password_form=change_password_form)
+
+
+    trip_count = Order.query.filter_by(user_id=current_user.id).filter(Order.order_finished.isnot(None)).count()
+    update_form.first_name.data = current_user.first_name
+    update_form.last_name.data = current_user.last_name
+
+    return render_template('profile.html', user=current_user, trip_count=trip_count, update_form=update_form, change_password_form=change_password_form)
+
+
+@app.route('/update_profile', methods=['POST'])
+def update_profile():
+    form = UpdateProfileForm()
+    if form.validate_on_submit():
+        current_user.first_name = form.first_name.data
+        current_user.last_name = form.last_name.data
+        db.session.commit()
+        flash('Profile updated successfully.', 'success')
+    if current_user.role == 'user':
+        return redirect(url_for('profile'))
+    else:
+        return redirect(url_for('driver_profile'))
+
+@app.route('/change_password', methods=['POST'])
+def change_password():
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        if not current_user.check_password(form.old_password.data):
+            flash('Incorrect old password.', 'danger')
+            if current_user.role == 'user':
+                return redirect(url_for('profile'))
+            else:
+                return redirect(url_for('driver_profile'))
+        current_user.set_password(form.new_password.data)
+        db.session.commit()
+        flash('Password changed successfully.', 'success')
+    if current_user.role == 'user':
+        return redirect(url_for('profile'))
+    else:
+        return redirect(url_for('driver_profile'))
+
+
+@app.route('/cancel_order/<int:order_id>', methods=['POST'])
+@login_required('user')
+def cancel_order(order_id):
+    order = Order.query.get_or_404(order_id)
+    if order.user_id != current_user.id:
+        flash('You do not have permission to cancel this order.', 'danger')
+        return redirect(url_for('index'))
+    if order.order_taked:
+        flash('This order has already been taken and cannot be canceled.', 'danger')
+        return redirect(url_for('index'))
+    
+    db.session.delete(order)
+    db.session.commit()
+    flash('Order canceled successfully.', 'success')
+    return redirect(url_for('index'))
+
+
+@app.route('/driver_profile', methods=['GET', 'POST'])
+@login_required('driver')
+def driver_profile():
+    update_form = UpdateProfileForm()
+    change_password_form = ChangePasswordForm()
+
+    if update_form.validate_on_submit() and update_form.submit.data:
+        current_user.first_name = update_form.first_name.data
+        current_user.last_name = update_form.last_name.data
+        current_user.middle_name = update_form.middle_name.data
+        db.session.commit()
+        flash('Profile updated successfully', 'success')
+        return redirect(url_for('driver_profile'))
+
+    if change_password_form.validate_on_submit() and change_password_form.submit.data:
+        if not current_user.check_password(change_password_form.old_password.data):
+            flash('Incorrect old password', 'danger')
+            return render_template('driver_profile.html', user=current_user, trip_count=Order.query.filter(Order.driver_id == current_user.id, Order.order_finished.isnot(None)).count(), update_form=update_form, change_password_form=change_password_form)
+        else:
+            current_user.set_password(change_password_form.new_password.data)
+            db.session.commit()
+            flash('Password changed successfully', 'success')
+            return redirect(url_for('driver_profile'))
+
+    trip_count = Order.query.filter(Order.driver_id == current_user.id, Order.order_finished.isnot(None)).count()
+    update_form.first_name.data = current_user.first_name
+    update_form.last_name.data = current_user.last_name
+    update_form.middle_name.data = current_user.middle_name
+
+    return render_template('driver_profile.html', user=current_user, trip_count=trip_count, update_form=update_form, change_password_form=change_password_form)
+
+
+@app.route('/take_order/<int:order_id>', methods=['POST'])
+@login_required('driver')
+def take_order(order_id):
+    order = Order.query.get_or_404(order_id)
+    
+    # Проверка, не занят ли водитель уже заказом
+    active_order = Order.query.filter_by(driver_id=current_user.id, order_finished=None).first()
+    if active_order:
+        flash("You already have an active order.", 'warning')
+        return redirect(url_for('driver_main'))
+    
+    if order.driver_id is not None:
+        flash('This order has already been taken.', 'warning')
+        return redirect(url_for('driver_main'))
+    
+    current_user.status = 'active'
+    order.driver_id = current_user.id
+    order.set_order_taked_time()
+    db.session.commit()
+    
+    flash('Order taken successfully!', 'success')
+    return redirect(url_for('driver_main'))

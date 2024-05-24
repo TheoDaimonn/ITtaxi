@@ -1,16 +1,11 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>IT-Taxi - Профиль</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <title>IT-Taxi - Профиль Водителя</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-
 <body>
     <div class="profile-page">
         <div class="container">
@@ -22,28 +17,34 @@
                         </a>
                     </div>
                     <div class="sidebar-item">
-                        <a href="{{ url_for('index') }}">
+                        <a href="{{ url_for('driver_main') }}">
                             <img class="home-img" src="../static/css/images/home.svg" alt="home">
                         </a>
-                        <a href="{{ url_for('profile') }}">
+                        <a href="{{ url_for('driver_profile') }}">
                             <img class="profile-img" src="../static/css/images/profile.svg" alt="profile">
                         </a>
-                        <a href="{{ url_for('history_of_user_orders') }}">
+                        <a href="{{ url_for('history_of_driver') }}">
                             <img class="history-img" src="../static/css/images/history.svg" alt="history">
                         </a>
                     </div>
                 </div>
                 <div class="content__main">
                     <div class="content__container">
-                        <h2 class="content__title">Profile</h2>
+                        <h2 class="content__title">Driver Profile</h2>
                         <div class="profile__info">
                             <p>First Name: {{ user.first_name }}</p>
                             <p>Last Name: {{ user.last_name }}</p>
+                            <p>Middle Name: {{ user.middle_name }}</p>
                             <p>Email: {{ user.email }}</p>
                             <p>Number of Trips: {{ trip_count }}</p>
+                            <p>Car Model: {{ user.car_model }}</p>
+                            <p>License Plate: {{ user.license_plate }}</p>
+                            {% if user.rating > 0 %}
+                                <p>Rating: {{ user.rating }}</p>
+                            {% endif %}
 
                             <h2>Update Information</h2>
-                            <form class="profile__form" method="POST" action="{{ url_for('update_profile') }}">
+                            <form class="profile__form" method="POST" action="{{ url_for('driver_profile') }}">
                                 {{ update_form.hidden_tag() }}
                                 <ul>
                                     <li>
@@ -58,7 +59,13 @@
                                             <span style="color: red;">[{{ error }}]</span>
                                         {% endfor %}
                                     </li>
-                                    <button class="profile__info-btn" type="submit">Update Name</button>
+                                    <li>
+                                        {{ update_form.middle_name(type="text", placeholder="Middle Name") }}<br>
+                                        {% for error in update_form.middle_name.errors %}
+                                            <span style="color: red;">[{{ error }}]</span>
+                                        {% endfor %}
+                                    </li>
+                                    <button class="profile__info-btn" type="submit">Update Profile</button>
                                 </ul>
                             </form>
 
@@ -107,5 +114,4 @@
         </div>
     </div>
 </body>
-
 </html>

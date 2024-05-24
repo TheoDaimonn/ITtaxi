@@ -1,25 +1,60 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>IT-Taxi - Вход для водителя</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
 
-{% block content %}
-    <h1>Log In as a Driver!</h1>
-    <form action="" method="post" novalidate>
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.email.label }}<br>
-            {{ form.email(size=32) }}<br>
-            {% for error in form.email.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.password.label }}<br>
-            {{ form.password(size=32) }}<br>
-            {% for error in form.password.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
-        <p>{{ form.submit() }}</p>
-    </form>
-    <p>New Driver? <a href="{{ url_for('driver_register') }}">Click to "Become a Driver"!</a></p>
-{% endblock %}
+<body>
+    <main class="main">
+        <div class="container main__container">
+            <div class="inner">
+                <form class="main__form" method="post" novalidate>
+                    <h1 class="title main__title">Log in to IT-Taxi as Driver</h1>
+                    {{ form.hidden_tag() }}
+                    <ul>
+                        <li>
+                            {{ form.email(class_='email', placeholder='Email', required=True) }}<br>
+                            {% for error in form.email.errors %}
+                                <span style="color: red;">[{{ error }}]</span>
+                            {% endfor %}
+                        </li>
+                        <li>
+                            {{ form.password(type='password', class_='password', placeholder='Password', required=True) }}<br>
+                            {% for error in form.password.errors %}
+                                <span style="color: red;">[{{ error }}]</span>
+                            {% endfor %}
+                        </li>
+                        <li>
+                            {{ form.remember_me() }} {{ form.remember_me.label }}
+                        </li>
+                        <button class="main__form-btn" type="submit">Log in</button>
+                    </ul>
+                    <div class="main__sign-container">
+                        <div class="main__sign-pass">
+                            <a href="{{ url_for('driver_register') }}">New Driver? Click to Register!</a>
+                        </div>
+                        <div class="main__sign-driver">
+                            <a href="{{ url_for('login') }}">Click to User Login!</a>
+                        </div>
+                    </div>
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flashes">
+                        {% for category, message in messages %}
+                            <div class="alert {{ category }}">{{ message }}</div>
+                        {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% endwith %}
+                </form>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

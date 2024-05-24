@@ -1,14 +1,76 @@
-{% extends "driver_base.html" %}
-
-{% block content %}
-    <h1>История заказов</h1>
-    {% if orders %}
-        <ul>
-            {% for order in orders %}
-                <li>Старт: {{ order.place_start }}, Финиш: {{ order.place_end }}, Цена: {{ order.price }}, Заказчик: {{ order.user.first_name }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>У вас пока нет завершенных заказов.</p>
-    {% endif %}
-{% endblock %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>IT-Taxi - История заказов</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="history-page">
+    <div class="list-order-page">
+        <div class="container">
+            <div class="content">
+                <div class="sidebar">
+                    <div class="sidebar-item">
+                        <a href="{{ url_for('choice') }}">
+                            <img class="logo" src="../static/css/images/logo.svg" alt="logo">
+                        </a>
+                    </div>
+                    <div class="sidebar-item">
+                        <a href="{{ url_for('driver_main') }}">
+                            <img class="home-img" src="../static/css/images/home.svg" alt="home">
+                        </a>
+                        <a href="{{ url_for('driver_profile') }}">
+                            <img class="profile-img" src="../static/css/images/profile.svg" alt="profile">
+                        </a>
+                        <a href="{{ url_for('history_of_driver') }}">
+                            <img class="history-img" src="../static/css/images/history.svg" alt="history">
+                        </a>
+                    </div>
+                </div>
+                <div class="content__main">
+                    <div class="content__container">
+                        <h1 class="content__title">History of trips</h1>
+                        <div class="orders__table">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Start</th>
+                                        <th>Finish</th>
+                                        <th>Price</th>
+                                        <th>Order placed</th>
+                                        <th>Trip finished</th>
+                                        <th>Trip duration</th>
+                                        <th>Customer</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for order in orders %}
+                                    <tr>
+                                        <td>{{ order.id }}</td>
+                                        <td>{{ order.place_start }}</td>
+                                        <td>{{ order.place_end }}</td>
+                                        <td>{{ order.price }}</td>
+                                        <td>{{ order.order_time }}</td>
+                                        <td>{{ order.order_finished }}</td>
+                                        <td>
+                                            {% if order.order_finished and order.order_taked %}
+                                                {{ (order.order_finished - order.order_taked).total_seconds() // 60 }} минут
+                                            {% else %}
+                                                N/A
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ order.user.first_name }} {{ order.user.last_name }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,13 +1,90 @@
-{% extends "driver_base.html" %}
-
-{% block content %}
-    <h1>Привет, {{ current_user.first_name }}!</h1>
-    <div>
-        <a href="{{ url_for('show_orders') }}" class="btn btn-primary">Принять заказ</a>
-        <a href="{{ url_for('history_of_driver') }}" class="btn btn-secondary">История заказов</a>
-        <a href="{{ url_for('active_order') }}" class="btn btn-secondary">Активный заказ</a>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>IT-Taxi - Главная страница водителя</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="index-page">
+    <div class="list-order-page">
+        <div class="container index">
+            <div class="content">
+                <div class="sidebar">
+                    <div class="sidebar-item">
+                        <a href="{{ url_for('choice') }}">
+                            <img class="logo" src="../static/css/images/logo.svg" alt="logo">
+                        </a>
+                    </div>
+                    <div class="sidebar-item">
+                        <a href="{{ url_for('driver_main') }}">
+                            <img class="home-img" src="../static/css/images/home.svg" alt="home">
+                        </a>
+                        <a href="{{ url_for('driver_profile') }}">
+                            <img class="profile-img" src="../static/css/images/profile.svg" alt="profile">
+                        </a>
+                        <a href="{{ url_for('history_of_driver') }}">
+                            <img class="history-img" src="../static/css/images/history.svg" alt="history">
+                        </a>
+                    </div>
+                </div>
+                <div class="content__main index">
+                    <div class="content__container">
+                        <h1 class="greeting">Hello, {{ current_user.first_name }}!</h1>
+                        {% if active_order %}
+                            <div class="order-header">
+                                <h2>Active Order</h2>
+                            </div>
+                        {% else %}
+                            <div class="order-header">
+                                <h2>Available Orders</h2>
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flashes">
+                            {% for category, message in messages %}
+                                <div class="alert {{ category }}">{{ message }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% endwith %}
+                    <div class="orders__container">
+                        <div class="available-order__container">
+                            {% if active_order %}
+                                <div class="orders-item active-order">
+                                    <div class="orders-item-text"><strong>From:</strong> {{ active_order.place_start }}</div>
+                                    <div class="orders-item-text"><strong>To:</strong> {{ active_order.place_end }}</div>
+                                    <div class="orders-item-text"><strong>Price:</strong> {{ active_order.price }}</div>
+                                    <div class="orders-item-text"><strong>Order time:</strong> {{ active_order.order_time }}</div>
+                                    <div class="orders-item-text"><strong>Taken time:</strong> {{ active_order.order_taked }}</div>
+                                    <div class="orders-item-text"><strong>User:</strong> {{ active_order.user.first_name }} {{ active_order.user.last_name }}</div>
+                                    <form method="post" action="{{ url_for('complete_order', order_id=active_order.id) }}">
+                                        <button type="submit" class="btn btn-success">Complete Order</button>
+                                    </form>
+                                </div>
+                            {% else %}
+                                {% for order in available_orders %}
+                                    <div class="orders-item available-order">
+                                        <div class="orders-item-text"><strong>From:</strong> {{ order.place_start }}</div>
+                                        <div class="orders-item-text"><strong>To:</strong> {{ order.place_end }}</div>
+                                        <div class="orders-item-text"><strong>Price:</strong> {{ order.price }}</div>
+                                        <div class="orders-item-text"><strong>Order time:</strong> {{ order.order_time }}</div>
+                                        <form method="post" action="{{ url_for('take_order', order_id=order.id) }}">
+                                            <button type="submit" class="btn btn-primary">Take Order</button>
+                                        </form>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    {% for order in orders %}
-    <div><p>Старт поездки: {{ order.place_start }} Финиш: {{ order.place_end }} Цена: {{order.price}} Имя заказчика: {{order.user.first_name}}</p></div>
-    {% endfor %}
-{% endblock %}
+</body>
+</html>

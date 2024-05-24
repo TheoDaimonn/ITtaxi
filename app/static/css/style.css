@@ -1,3 +1,5 @@
+/* style.css */
+
 *,
 *::before,
 *::after {
@@ -16,6 +18,50 @@ body {
     font-size: 15px;
     font-weight: 400;
     color: #212529;
+}
+
+body.index-page {
+    background: none;
+    color: #fff;
+    font-family: 'Ubuntu', sans-serif;
+}
+
+body.order-page {
+    background-color: transparent;
+    color: #fff;
+    font-family: 'Ubuntu', sans-serif;
+}
+
+body.order-page .content__main {
+    background-color: transparent;
+}
+
+.index-page .list-order-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.index-page .container {
+    flex: 1;
+}
+
+.index-page .content {
+    flex: 1;
+    display: flex;
+}
+
+.index-page .content__main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.index-page .orders__container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 a {
@@ -37,13 +83,22 @@ section,
     align-items: center;
 }
 
-body {
-    background-image:url('images/background.png') ;
+body:not(.history-page) {
+    background-image: url('images/background.png');
     background-position: center;
     background-repeat: no-repeat;
     background-size: 105% 105%;
+    background-attachment: fixed;
     color: #fff;
-    font-family: "Inter", sans-serif;
+    font-family: 'Ubuntu', sans-serif;
+}
+
+body.history-page {
+    background-color: #191d1f;
+}
+
+body.history-page .content__title {
+    color: #fff;
 }
 
 .main-container {
@@ -131,6 +186,9 @@ body {
 }
 
 /* registration */
+.reg__form {
+    margin-left: 30px;
+}
 
 .reg__container {
     margin: 0;
@@ -154,7 +212,12 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    position: fixed;
+    top: 0;
+    height: 100%;
 }
 
 .sidebar-item {
@@ -178,6 +241,7 @@ body {
 
 .reg__title {
     margin-top: 30px;
+    margin-left: 30px;
     font-size: 30px;
     font-weight: 800;
     text-align: center;
@@ -253,15 +317,20 @@ body {
 }
 
 .content {
-    min-height: 100vh;
+    width: 100%;
     display: flex;
 }
 
 .content__main {
-    width: 100%;
+    width: calc(100% - 100px);
     background-color: #191d1f;
     display: flex;
     justify-content: center;
+    margin-left: 100px;
+}
+
+.index {
+    background: none;
 }
 
 .content__container {
@@ -318,19 +387,23 @@ body {
 }
 
 .orders-item {
-    width: 380px;
-    height: 220px;
-    margin-bottom: 20px;
-    padding-top: 35px;
-    background-color: #2B2B2B;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
+    width: 400px; /* Увеличьте ширину элементов */
+    padding: 20px;
+    margin: 10px 0;
+    background-color: #2b2b2b;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    word-wrap: break-word; /* Добавьте перенос слов */
+}
+
+.orders-item:hover {
+    transform: translateY(-5px);
 }
 
 .orders-item-text {
-    margin-bottom: 15px;
-    font-size: 15px;
+    margin-bottom: 10px;
+    font-size: 16px;
 }
 
 .orders-item div {
@@ -426,6 +499,7 @@ input:checked + .slider:before {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    gap: 20px;
 }
 
 .available-order {
@@ -440,3 +514,188 @@ input:checked + .slider:before {
 .apply-order-btn {
     margin: 0 auto;
 }
+
+/* Стили для flash сообщений */
+.flashes {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.alert {
+    padding: 10px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    display: inline-block;
+    font-size: 14px;
+    width: 320px;
+}
+
+.alert.success,
+.alert.message {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+
+}
+
+.alert.danger,
+.alert.warning {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+/* Добавленные стили для index.html */
+.greeting {
+    margin: 20px 0;
+    font-size: 36px;
+    text-align: center;
+}
+
+.arrange-order-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.arrange-order-btn {
+    width: 320px;
+    padding: 10px 20px;
+    background-color: #fff;
+    color: #191d1f;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align: center;
+}
+
+.arrange-order-btn:hover {
+    background-color: #585858;
+    color: #fff;
+}
+
+.orders-item {
+    width: 300px;
+    padding: 20px;
+    margin: 10px 0;
+    background-color: #2b2b2b;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.orders-item:hover {
+    transform: translateY(-5px);
+}
+
+.orders-item-text {
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.orders__table {
+    margin-top: 20px;
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    text-align: left;
+    color: #fff;
+}
+
+.table th {
+    background-color: #74651f;
+    color: #fff;
+    font-weight: bold;
+}
+
+.table tr:nth-child(even) {
+    background-color: #2b2b2b;
+}
+
+.table tr:nth-child(odd) {
+    background-color: #191d1f;
+}
+
+.table tr:hover {
+    background-color: #333;
+}
+
+.btn {
+    padding: 5px 10px;
+    background-color: #74651f;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #585858;
+}
+
+.btn-secondary {
+    background-color: #191d1f;
+}
+
+.btn-secondary:hover {
+    background-color: #333;
+}
+
+.arrange-order-btn {
+    padding: 10px 20px;
+    background-color: #fff; /* Белый цвет для кнопки на странице index */
+    color: #191d1f;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.arrange-order-btn:hover {
+    background-color: #585858;
+    color: #fff;
+}
+
+.btn-secondary {
+    padding: 5px 10px;
+    background-color: #74651f; /* Цвет для кнопок на странице history */
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: #585858;
+    color: #fff;
+}
+
+.choise_login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.choise-btn {
+    margin-bottom: 20px;
+}
+
+.order-header {
+    text-align: center;
+    margin: 20px 0;
+}
+
