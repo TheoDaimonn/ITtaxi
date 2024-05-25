@@ -68,9 +68,14 @@ def register():
         user = User(first_name=form.first_name.data, last_name=form.last_name.data, email=form.email.data)
         user.set_password(form.password.data)
         db.session.add(user)
-        db.session.commit()
-        flash('Thanks for registering!', 'success')
-        return redirect(url_for('login'))
+        try:
+            db.session.commit()
+            flash('Thanks for registering!', 'success')
+            return redirect(url_for('login'))
+        except Exception as e:
+            db.session.rollback()
+            flash('An error occurred while processing your request.', 'danger')
+            print(f"Error: {e}")
     elif form.errors:
         flash('Please fill out all fields correctly.', 'danger')
     return render_template('register.html', title='Register', form=form)
@@ -106,9 +111,14 @@ def order():
         new_order.set_price(form.place_start.data, form.place_end.data)
         new_order.set_order_time()
         db.session.add(new_order)
-        db.session.commit()
-        
-        flash('Your order has been created successfully!', 'success')
+        try:
+            db.session.commit()
+            flash('Your order has been created successfully!', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash('An error occurred while processing your request.', 'danger')
+            print(f"Error: {e}")
+
         return redirect(url_for('index'))
     return render_template('new-order.html', title='New Order', form=form)
 
@@ -126,9 +136,14 @@ def driver_register():
         new_id = 1 + max_id
         driver.id = new_id
         db.session.add(driver)
-        db.session.commit()
-        flash('Thanks for registering!', 'success')
-        return redirect(url_for('driver_login'))
+        try:
+            db.session.commit()
+            flash('Thanks for registering!', 'success')
+            return redirect(url_for('driver_login'))
+        except Exception as e:
+            db.session.rollback()
+            flash('An error occurred while processing your request.', 'danger')
+            print(f"Error: {e}")        
     elif form.errors:
         flash('Please fill out all fields correctly.', 'danger')
     return render_template('driver_register.html', title='Register', form=form)
@@ -183,9 +198,13 @@ def complete_order(order_id):
     
     order.set_order_finished_time()
     current_user.status = 'inactive'
-    db.session.commit()
-    
-    flash('Order completed.', 'success')
+    try:
+        db.session.commit()
+        flash('Order completed.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash('An error occurred while processing your request.', 'danger')
+        print(f"Error: {e}")                
     return redirect(url_for('driver_main'))
 
 
@@ -212,8 +231,13 @@ def rate_order(order_id):
         if driver:
             driver.update_rating(form.rating.data)
             order.score = form.rating.data
-            db.session.commit()
-            flash('Order has been rated.', 'success')
+            try:
+                db.session.commit()
+                flash('Order has been rated.', 'success')
+            except Exception as e:
+                db.session.rollback()
+                flash('An error occurred while processing your request.', 'danger')
+                print(f"Error: {e}")      
         else:
             flash('Driver not found for this order.', 'danger')
         return redirect(url_for('history_of_user_orders'))
@@ -229,10 +253,14 @@ def profile():
     if update_form.validate_on_submit() and update_form.submit.data:
         current_user.first_name = update_form.first_name.data
         current_user.last_name = update_form.last_name.data
-        db.session.commit()
-        flash('Name updated successfully', 'success')
-        return redirect(url_for('profile'))
-
+        try:
+            db.session.commit()
+            flash('Name updated successfully', 'success')
+            return redirect(url_for('profile'))
+        except Exception as e:
+            db.session.rollback()
+            flash('An error occurred while processing your request.', 'danger')
+            print(f"Error: {e}")      
     if change_password_form.validate_on_submit() and change_password_form.submit.data:
         if not current_user.check_password(change_password_form.old_password.data):
             flash('Incorrect old password', 'danger')
@@ -263,8 +291,13 @@ def update_profile():
     if form.validate_on_submit():
         current_user.first_name = form.first_name.data
         current_user.last_name = form.last_name.data
-        db.session.commit()
-        flash('Profile updated successfully.', 'success')
+        try:
+            db.session.commit()
+            flash('Profile updated successfully.', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash('An error occurred while processing your request.', 'danger')
+            print(f"Error: {e}")      
     if current_user.role == 'user':
         return redirect(url_for('profile'))
     else:
@@ -281,8 +314,13 @@ def change_password():
             else:
                 return redirect(url_for('driver_profile'))
         current_user.set_password(form.new_password.data)
-        db.session.commit()
-        flash('Password changed successfully.', 'success')
+        try:
+            db.session.commit()
+            flash('Password changed successfully.', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash('An error occurred while processing your request.', 'danger')
+            print(f"Error: {e}")      
     if current_user.role == 'user':
         return redirect(url_for('profile'))
     else:
@@ -301,8 +339,13 @@ def cancel_order(order_id):
         return redirect(url_for('index'))
     
     db.session.delete(order)
-    db.session.commit()
-    flash('Order canceled successfully.', 'success')
+    try:
+        db.session.commit()
+        flash('Order canceled successfully.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash('An error occurred while processing your request.', 'danger')
+        print(f"Error: {e}")      
     return redirect(url_for('index'))
 
 
@@ -316,9 +359,14 @@ def driver_profile():
         current_user.first_name = update_form.first_name.data
         current_user.last_name = update_form.last_name.data
         current_user.middle_name = update_form.middle_name.data
-        db.session.commit()
-        flash('Profile updated successfully', 'success')
-        return redirect(url_for('driver_profile'))
+        try:
+            db.session.commit()
+            flash('Profile updated successfully', 'success')
+            return redirect(url_for('driver_profile'))
+        except Exception as e:
+            db.session.rollback()
+            flash('An error occurred while processing your request.', 'danger')
+            print(f"Error: {e}")      
 
     if change_password_form.validate_on_submit() and change_password_form.submit.data:
         if not current_user.check_password(change_password_form.old_password.data):
@@ -326,9 +374,14 @@ def driver_profile():
             return render_template('driver_profile.html', user=current_user, trip_count=Order.query.filter(Order.driver_id == current_user.id, Order.order_finished.isnot(None)).count(), update_form=update_form, change_password_form=change_password_form)
         else:
             current_user.set_password(change_password_form.new_password.data)
-            db.session.commit()
-            flash('Password changed successfully', 'success')
-            return redirect(url_for('driver_profile'))
+            try:
+                db.session.commit()
+                flash('Password changed successfully', 'success')
+                return redirect(url_for('driver_profile'))
+            except Exception as e:
+                db.session.rollback()
+                flash('An error occurred while processing your request.', 'danger')
+                print(f"Error: {e}")      
 
     trip_count = Order.query.filter(Order.driver_id == current_user.id, Order.order_finished.isnot(None)).count()
     update_form.first_name.data = current_user.first_name
@@ -356,7 +409,11 @@ def take_order(order_id):
     current_user.status = 'active'
     order.driver_id = current_user.id
     order.set_order_taked_time()
-    db.session.commit()
-    
-    flash('Order taken successfully!', 'success')
+    try:
+        db.session.commit()
+        flash('Order taken successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash('An error occurred while processing your request.', 'danger')
+        print(f"Error: {e}")      
     return redirect(url_for('driver_main'))
