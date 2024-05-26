@@ -22,3 +22,5 @@ It project provided by Moscow Aviation Institute
 1)Зарегистрироваться на платформе и установить ngrok: snap install ngrok<br />
 2)Скопировать local host и написать следующее: ngrok http {your_local_host_name}<br />
 
+# Ссылка на трекер
+https://trello.com/b/Y9RJaWft/project-tasks
