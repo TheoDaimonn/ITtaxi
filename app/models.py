@@ -258,7 +258,6 @@ class Driver(UserMixin, db.Model):
     car_model = db.Column(db.String(64), index=True, nullable=False)
     license_plate = db.Column(db.String(64), unique=True, index=True, nullable=False)
     password_hashed = db.Column(db.String(200), nullable=False)
-    orders = db.relationship('Order', backref='driver', lazy='dynamic')
     role = db.Column(db.String(20), default='driver')
     status = db.Column(db.String(20), default='inactive', nullable=False)
     number_of_ratings = db.Column(db.Integer, default=0, nullable=False)
